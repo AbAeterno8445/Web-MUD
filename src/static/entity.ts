@@ -10,7 +10,13 @@ export class Entity extends Tile {
 
     // GET/SET hp
     get hp(): number { return this._hp; }
-    set hp(hp: number) { this._maxhp = hp; }
+    set hp(hp: number) {
+        if (hp < this.maxhp) {
+            this._hp = hp;
+        } else {
+            this._hp = this.maxhp;
+        }
+    }
 
     // GET/SET maxhp
     get maxhp(): number { return this._maxhp; }
