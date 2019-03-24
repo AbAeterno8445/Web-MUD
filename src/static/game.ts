@@ -1,3 +1,5 @@
+import {Map} from "./map"
+
 var socket = io();
 
 var movement = {
