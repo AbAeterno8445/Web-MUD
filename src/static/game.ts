@@ -1,5 +1,3 @@
-import {Map} from "./map"
-
 var socket = io();
 
 var movement = {
@@ -56,7 +54,6 @@ playerImg.src = "https://opengameart.org/sites/default/files/DungeonCrawl_Projec
 
 socket.on('state', function(players: any) {
   context.clearRect(0, 0, 800, 600);
-  context.fillStyle = 'green';
   for (var id in players) {
     var player = players[id];
     context.drawImage(playerImg, 0, 64, 32, 32, player.x, player.y, 32, 32);

@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>Online Web Game - Sign in</title>
+    <style>
+      .g-signin2{
+        width: 100%;
+      }
+      .g-signin2 > div{
+        margin: 0 auto;
+      }
+      div {
+        text-align: center;
+      }
+    </style>
+    <meta name="google-signin-client_id" content="858342257243-cq6gsi1djkukgq3vlhkat4ir3maa922m.apps.googleusercontent.com">
+  </head>
+  <body>
+    <div>
+      <h1>Sign in</h1>
+      <div>
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+      </div>
+    </div>
+  </body>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <script>
+    function onSignIn(googleUser) {
+      var id_token = googleUser.getAuthResponse().id_token;
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'http://localhost:5000/tokensignin');
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.onload = function() {
+        window.location.assign('/charselect');
+      };
+      xhr.send('idtoken=' + id_token);
+    }
+  </script>
+</html>

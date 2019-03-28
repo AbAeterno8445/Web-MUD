@@ -1,0 +1,70 @@
+<html>
+  <head>
+    <title>Online Web Game - Character creation</title>
+    <style>
+      div {
+        text-align: center;
+      }
+      .charImgBox {
+        height:48px;
+        width:48px;
+        border:1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h1>Character creation</h1>
+      <form action="/createchar_act" method="POST">
+        <input type="text" name="inp_charname" placeholder="Character name"><br>
+        <div>
+          <input type="hidden" id="charSprite" value="">
+          <button type="button" onclick="prevchar();">Prev</button>
+          <canvas class="charImgBox" id="charCanvas"></canvas>
+          <button type="button" onclick="nextchar();">Next</button>
+        </div><br>
+        <input type="submit" value="Create">
+      </form>
+    </div>
+    <script>
+      var char = 0;
+      var charList = [77, 105, 128, 139, 141, 142, 106];
+      var charImg = new Image();
+      var charImgLoaded = false;
+      charImg.onload = function() {
+        charImgLoaded = true;
+        drawChar();
+      }
+      charImg.src = "https://opengameart.org/sites/default/files/DungeonCrawl_ProjectUtumnoTileset.png";
+
+      const canvas = document.getElementById("charCanvas");
+      canvas.width = 48;
+      canvas.height = 48;
+      const context = canvas.getContext("2d");
+
+      function prevchar() {
+        if (!charImgLoaded) return;
+        char--;
+        if (char < 0) {
+          char = charList.length - 1;
+        }
+        drawChar();
+      }
+
+      function nextchar() {
+        if (!charImgLoaded) return;
+        char++;
+        if (char > charList.length - 1) {
+          char = 0;
+        }
+        drawChar();
+      }
+
+      const charSpriteHolder = document.getElementById("charSprite");
+      function drawChar() {
+        context.clearRect(0, 0, 48, 48);
+        context.drawImage(charImg, (charList[char] % 64) * 32, Math.floor(charList[char] / 64) * 32, 32, 32, 8, 8, 32, 32);
+        charSpriteHolder.value = charList[char];
+      }
+    </script>
+</html>
