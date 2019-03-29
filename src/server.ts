@@ -158,6 +158,9 @@ io.on('connection', function(socket: any) {
       player.y += 5;
     }
   });
+  socket.on('disconnect', function() {
+    delete players[socket.id];
+  });
 });
 setInterval(function() {
   io.sockets.emit('state', players);
