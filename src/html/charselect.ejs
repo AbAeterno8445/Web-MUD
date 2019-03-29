@@ -3,15 +3,48 @@
     <title>Online Web Game - Character selection</title>
     <style>
       div {
-        text-align: center;
+        text-align:center;
+        padding:8px;
+      }
+      .charCanvas {
+        width:48px;
+        height:48px;
+        border:1px solid #ccc;
       }
     </style>
   </head>
   <body>
     <div>
       <h1>Character selection</h1>
+      <% charList.forEach(function(char, i) { %>
+        <div style="width:auto; border:1px solid #ccc;">
+          <canvas class="charCanvas" id="chCanvas<%=i%>"></canvas><br>
+          <p><%= char.name %></p>
+          <a href="/charselect_act?charID=<%= char.charID %>">Select</a>
+        </div>
+      <% }) %>
       <form action="/createchar">
         <input type="submit" value="Create new character">
       </form>
     </div>
+  </body>
+
+  <script>
+    var charImg = new Image();
+    charImg.onload = drawChars;
+    charImg.src = "https://opengameart.org/sites/default/files/DungeonCrawl_ProjectUtumnoTileset.png";
+
+    var tmp_canvas;
+    var context;
+    function drawChars() {
+      <% charList.forEach(function(char, i) { %>
+        tmp_canvas = document.getElementById("chCanvas<%=i%>");
+        tmp_canvas.width = 48;
+        tmp_canvas.height = 48;
+        context = tmp_canvas.getContext('2d');
+        context.clearRect(0, 0, 48, 48);
+        context.drawImage(charImg, (<%= char.tileID %> % 64) * 32, Math.floor(<%= char.tileID %> / 64) * 32, 32, 32, 8, 8, 32, 32);
+      <% }) %>
+    }
+  </script>
 </html>

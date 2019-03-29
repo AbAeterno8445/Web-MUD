@@ -9,6 +9,14 @@ export class SessionHandler {
         return this._sessionList.find((sess) => sess.sessionID === sessionID);
     }
 
+    public getSessionAccID(sessionID: string): string {
+        var session = this.findSession(sessionID);
+        if (session) {
+            return session.accID;
+        }
+        return undefined;
+    }
+
     public createSession(sessionID: string, accID: string) {
         if (this.findSession(sessionID) != undefined) return;
         this._sessionList.push(new Session(sessionID, accID));

@@ -16,12 +16,26 @@ export class AccountHandler {
         this.loadAccountsFile();
     }
 
-    // Returns an account based on ID.
+    /** Load the JSON accounts file */
+    public loadAccountsFile(): void {
+        var accObj: any;
+        fs.readFile(this._listPath, 'utf8', function (err: any, data: any) {
+            if (err) throw err;
+
+            accObj = JSON.parse(data);
+            accObj["accounts"].forEach((acc: any) => {
+                this._addAccToList(acc.id, acc.characters);
+            });
+            this._listReady = true;
+        }.bind(this));
+    }
+
+    /** Returns an account based on ID. */
     public getAccountByID(id: string): Account {
         return this._accountList.find((acc) => acc.id === id);
     }
 
-    // Adds an account object to the account list
+    /** Adds an account object to the account list */
     private _addAccToList(id: string, characters: number[]): boolean {
         if (this.getAccountByID(id) != undefined) return false;
 
@@ -32,7 +46,7 @@ export class AccountHandler {
         return true;
     }
 
-    // Update JSON file to state of accounts list
+    /** Update JSON file to state of accounts list */
     private _updateJSON(): void {
         var accObj = {
             "accounts": this._accountList
@@ -42,22 +56,8 @@ export class AccountHandler {
         });
     }
 
-    // Load the JSON accounts file
-    public loadAccountsFile(): void {
-        var accObj: any;
-        fs.readFile(this._listPath, 'utf8', function (err: any, data: any) {
-            if (err) throw err;
-
-            accObj = JSON.parse(data);
-            accObj["accounts"].forEach((acc: any) => {
-                this._addAccToList(acc.id, []);
-            });
-            this._listReady = true;
-        }.bind(this));
-    }
-
-    // Create an account (if it doesn't already exist), then add it to the JSON file
-    // Returns 0 if failed, 1 if waiting, 2 if successful
+    /** Create an account (if it doesn't already exist), then add it to the JSON file
+    * Returns 0 if failed, 1 if waiting, 2 if successful */
     public createAccountAsync(id: string): number {
         if (this._listReady == false) {
             var self = this;
@@ -72,8 +72,8 @@ export class AccountHandler {
         return 2;
     }
 
-    // Delete an account through id
-    // Returns 0 if failed, 1 if waiting, 2 if successful
+    /** Delete an account through id
+    * Returns 0 if failed, 1 if waiting, 2 if successful */
     public deleteAccountAsync(id: string): number {
         if (this._listReady == false) {
             var self = this;
@@ -87,5 +87,14 @@ export class AccountHandler {
             return 2;
         }
         return 0;
+    }
+
+    /** Associate character ID to account */
+    public associateChar(charID: number, accID: string): void {
+        var acc = this.getAccountByID(accID);
+        if (acc) {
+            acc.characters.push(charID);
+        }
+        this._updateJSON();
     }
 }

@@ -56,6 +56,6 @@ socket.on('state', function(players: any) {
   context.clearRect(0, 0, 800, 600);
   for (var id in players) {
     var player = players[id];
-    context.drawImage(playerImg, 0, 64, 32, 32, player.x, player.y, 32, 32);
+    context.drawImage(playerImg, (player.char % 64) * 32, Math.floor(player.char / 64) * 32, 32, 32, player.x, player.y, 32, 32);
   }
 });

@@ -16,9 +16,9 @@
     <div>
       <h1>Character creation</h1>
       <form action="/createchar_act" method="POST">
-        <input type="text" name="inp_charname" placeholder="Character name"><br>
+        <input type="text" name="inp_charname" maxlength="16" placeholder="Character name"><br>
         <div>
-          <input type="hidden" id="charSprite" value="">
+          <input type="hidden" name="charSprite" id="charSprite" value="">
           <button type="button" onclick="prevchar();">Prev</button>
           <canvas class="charImgBox" id="charCanvas"></canvas>
           <button type="button" onclick="nextchar();">Next</button>

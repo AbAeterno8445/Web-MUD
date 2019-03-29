@@ -34,4 +34,10 @@ export class Entity extends Tile {
     // GET/SET maxhp
     get maxhp(): number { return this._maxhp; }
     set maxhp(maxhp: number) { this._maxhp = maxhp; }
+
+    // GET level
+    get level(): number { return this._level; }
+
+    // GET dmgPhys
+    get dmgPhys(): number { return this._dmgPhys; }
 }

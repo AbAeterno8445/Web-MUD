@@ -7,4 +7,6 @@ export class Character extends Entity {
         super(name, 0, 0, spriteID);
         this._charID = id;
     }
+
+    get charID(): number { return this._charID; }
 }
