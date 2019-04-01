@@ -58,6 +58,16 @@ function authSession(req: any, res: any, next: any) {
   } else next();
 }
 
+// Session authentication with selected character
+function authSessionChar(req: any, res: any, next: any) {
+  var sess = sessionHandler.findSession(req.sessionID);
+  if (sess) {
+    if (sess.selectedChar) {
+      next();
+    } else res.redirect('/charselect');
+  } else res.redirect('/');
+}
+
 // Routing
 app.get('/', function(request, response) {
   response.render('index.ejs');
@@ -123,7 +133,7 @@ app.post('/createchar_act', authSession, function(request, response) {
 });
 
 // Game
-app.get('/game', authSession, function(request, response) {
+app.get('/game', authSession, authSessionChar, function(request, response) {
   response.render('game.ejs');
 });
 
@@ -136,6 +146,8 @@ const players: any = {};
 io.on('connection', function(socket: any) {
   var playerSession = sessionHandler.findSession(socket.handshake.sessionID);
   var playerChar = charHandler.getCharByID(playerSession.selectedChar);
+
+  // Player joins
   socket.on('new player', function() {
     players[socket.id] = {
       x: 300,
@@ -143,6 +155,8 @@ io.on('connection', function(socket: any) {
       char: playerChar.tileID
     };
   });
+
+  // Player movement
   socket.on('movement', function(data: any) {
     var player = players[socket.id] || {};
     if (data.left) {
@@ -158,10 +172,14 @@ io.on('connection', function(socket: any) {
       player.y += 5;
     }
   });
+
+  // Player disconnects
   socket.on('disconnect', function() {
     delete players[socket.id];
   });
 });
+
+// Send state to players
 setInterval(function() {
   io.sockets.emit('state', players);
 }, 1000 / 60);

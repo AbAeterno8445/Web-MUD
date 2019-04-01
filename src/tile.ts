@@ -5,11 +5,13 @@ export class Tile {
     private _posX: number;
     private _posY: number;
     private _tileID: number;
+    private _flags: string[];
 
     constructor(x: number, y:number, id: number) {
-        this.posX = x;
-        this.posY = y;
-        this.tileID = id;
+        this._posX = x;
+        this._posY = y;
+        this._tileID = id;
+        this._flags = new Array();
     }
 
     // GET/SET posX
@@ -23,4 +25,22 @@ export class Tile {
     // GET/SET tileID
     get tileID(): number { return this._tileID; }
     set tileID(id: number) { this._tileID = id; }
+
+    // GET flags
+    get flags(): string[] { return this._flags; }
+
+    /** Add a flag to the tile */
+    public addFlag(f: string): void {
+        this._flags.push(f);
+    }
+
+    /** Remove a flag from the tile */
+    public removeFlag(f: string): void {
+        this._flags.splice(this._flags.indexOf(f));
+    }
+
+    /** Clears the tile flags */
+    public clearFlags(): void {
+        this._flags = new Array();
+    }
 }
