@@ -1,5 +1,4 @@
 import {Tile} from "./tile";
-import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from "constants";
 
 const mapTileLimit = 64;
 const defaultTile = 0;
@@ -78,6 +77,14 @@ export class Map {
         }.bind(this));
     }
 
+    /** Returns the client data dictionary for this map */
+    public getClientDict(): any {
+        var clientDict = {
+            tiles: this._mapTiles
+        }
+        return clientDict;
+    }
+
     /** Resizes the map */
     public resize(w: number, h: number): void {
         const old_width = this.width;
@@ -116,6 +123,3 @@ export class Map {
         }
     }
 }
-
-var testMap: Map = new Map();
-testMap.loadFromFile("test.json");

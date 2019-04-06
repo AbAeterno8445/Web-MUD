@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <title>Online Web Game - Sign in</title>
+    <style>
+      div {
+        text-align: center;
+      }
+    </style>
+    <meta name="google-signin-client_id" content="858342257243-cq6gsi1djkukgq3vlhkat4ir3maa922m.apps.googleusercontent.com">
+  </head>
+  <body>
+    <div>
+        <h1>Error</h1>
+        <p style="color: red;"><%= errorMsg %></p>
+        <form action="/">
+            <input type="submit" value="Return">
+        </form>
+    </div>
+  </body>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+</html>

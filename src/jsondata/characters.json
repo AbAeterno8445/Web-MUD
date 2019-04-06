@@ -1,8 +1,8 @@
 {
     "characters": [
         {
-            "_posX": 0,
-            "_posY": 0,
+            "_posX": 11,
+            "_posY": 5,
             "_tileID": "77",
             "_flags": [],
             "_cooldownList": {
@@ -17,6 +17,24 @@
             "_dmgPhys": 1,
             "_hp": 20,
             "_charID": 1
+        },
+        {
+            "_posX": 0,
+            "_posY": 0,
+            "_tileID": "139",
+            "_flags": [],
+            "_cooldownList": {
+                "mvSpeed": 0,
+                "attSpeed": 0
+            },
+            "_name": "lord lechuga",
+            "_level": 1,
+            "_mvSpeed": 0.4,
+            "_attSpeed": 0.6,
+            "_maxhp": 20,
+            "_dmgPhys": 1,
+            "_hp": 20,
+            "_charID": 2
         }
     ]
 }

@@ -17,7 +17,9 @@ export class Character extends Entity {
             id: this.charID,
             drawX: this.drawX,
             drawY: this.drawY,
-            tileID: this.tileID
+            tileID: this.tileID,
+            hp: this.hp,
+            maxhp: this.maxhp
         }
         return dataDict;
     }

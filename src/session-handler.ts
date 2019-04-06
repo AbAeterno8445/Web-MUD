@@ -5,25 +5,31 @@ export class SessionHandler {
         this._sessionList = new Array();
     }
 
-    public findSession(sessionID: string): Session {
+    public findSessionByID(sessionID: string): Session {
         return this._sessionList.find((sess) => sess.sessionID === sessionID);
     }
 
+    public findSessionByAcc(accName: string): Session {
+        return this._sessionList.find((sess) => sess.accName === accName);
+    }
+
     public getSessionAccName(sessionID: string): string {
-        var session = this.findSession(sessionID);
+        var session = this.findSessionByID(sessionID);
         if (session) {
             return session.accName;
         }
         return undefined;
     }
 
+    /** Create a new session, associating account with session ID */
     public createSession(sessionID: string, accName: string) {
-        if (this.findSession(sessionID) != undefined) return;
+        if (this.findSessionByID(sessionID) != undefined) return;
         this._sessionList.push(new Session(sessionID, accName));
     }
 
+    /** Log session out */
     public logoutSession(sessionID: string) {
-        var sess = this.findSession(sessionID);
+        var sess = this.findSessionByID(sessionID);
         if (sess) {
             this._sessionList.splice(this._sessionList.indexOf(sess));
         }

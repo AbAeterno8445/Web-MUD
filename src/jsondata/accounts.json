@@ -6,6 +6,13 @@
             "characters": [
                 1
             ]
+        },
+        {
+            "name": "test",
+            "password": "test",
+            "characters": [
+                2
+            ]
         }
     ]
 }

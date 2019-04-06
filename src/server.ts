@@ -2,6 +2,7 @@ import express from 'express';
 import {AccountHandler} from './account-handler';
 import {CharacterHandler} from './character-handler';
 import {SessionHandler} from './session-handler';
+import {Map} from './map';
 
 const http = require('http');
 const socketIO = require('socket.io');
@@ -39,21 +40,21 @@ app.use(express.urlencoded());
 
 // Pages requiring no current session
 function noSessionPage(req: any, res: any, next: any) {
-  if (sessionHandler.findSession(req.sessionID)) {
+  if (sessionHandler.findSessionByID(req.sessionID)) {
     res.redirect('/charselect');
   } else next();
 }
 
 // Session authentication
 function authSession(req: any, res: any, next: any) {
-  if (sessionHandler.findSession(req.sessionID) == undefined) {
+  if (sessionHandler.findSessionByID(req.sessionID) == undefined) {
     res.redirect('/');
   } else next();
 }
 
 // Session authentication with selected character
 function authSessionChar(req: any, res: any, next: any) {
-  var sess = sessionHandler.findSession(req.sessionID);
+  var sess = sessionHandler.findSessionByID(req.sessionID);
   if (sess) {
     if (sess.selectedChar) {
       next();
@@ -121,7 +122,7 @@ app.get('/charselect', authSession, function(request, response) {
 
 // Character selection processing
 app.get('/charselect_act', authSession, function(request, response) {
-  var session = sessionHandler.findSession(request.sessionID);
+  var session = sessionHandler.findSessionByID(request.sessionID);
   var acc = accHandler.getAccountByName(session.accName);
   var charID = +request.query.charID;
 
@@ -160,7 +161,16 @@ app.post('/createchar_act', authSession, function(request, response) {
 
 // Game
 app.get('/game', authSession, authSessionChar, function(request, response) {
-  response.render('game.ejs');
+  var sess = sessionHandler.findSessionByID(request.sessionID);
+  var acc = accHandler.getAccountByName(sess.accName);
+
+  if (acc.inGame == false) {
+    response.render('game.ejs');
+  } else {
+    console.log("Session", request.sessionID, "login denied - already logged in!");
+    var errorMsg: string = "Already logged in!";
+    response.render('errorpage.ejs', {errorMsg});
+  }
 });
 
 // Starts the server.
@@ -169,6 +179,8 @@ server.listen(5000, function() {
 });
 
 const players: any = {};
+const testMap: Map = new Map();
+testMap.loadFromFile("test.json");
 function updatePlayerChar(socketID: any, character: any): void {
   if (players[socketID]) {
     players[socketID] = character.getClientDict();
@@ -176,13 +188,16 @@ function updatePlayerChar(socketID: any, character: any): void {
 }
 
 io.on('connection', function(socket: any) {
-  var playerSession = sessionHandler.findSession(socket.handshake.sessionID);
+  var playerSession = sessionHandler.findSessionByID(socket.handshake.sessionID);
+  var playerAcc = accHandler.getAccountByName(playerSession.accName);
   var playerChar = charHandler.getCharByID(playerSession.selectedChar);
 
   // Player joins
   socket.on('new player', function() {
+    playerAcc.inGame = true;  // Remove this to enable double-logging
     playerChar.moveTo(6, 6);
     players[socket.id] = playerChar.getClientDict();
+    io.sockets.connected[socket.id].emit('mapdata', testMap.getClientDict());
   });
 
   // Player movement
@@ -202,6 +217,7 @@ io.on('connection', function(socket: any) {
   // Player disconnects
   socket.on('disconnect', function() {
     delete players[socket.id];
+    playerAcc.inGame = false;
   });
 });
 

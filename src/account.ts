@@ -2,6 +2,7 @@ export class Account {
     public name: string;
     public password: string;
     public characters: number[];
+    public inGame: boolean = false;
 
     constructor(name: string, password: string) {
         this.name = name;
