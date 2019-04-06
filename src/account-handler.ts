@@ -24,23 +24,22 @@ export class AccountHandler {
 
             accObj = JSON.parse(data);
             accObj["accounts"].forEach((acc: any) => {
-                this._addAccToList(acc.id, acc.characters);
+                this._addAccToList(acc.name, acc.password, acc.characters);
             });
             this._listReady = true;
         }.bind(this));
     }
 
-    /** Returns an account based on ID. */
-    public getAccountByID(id: string): Account {
-        return this._accountList.find((acc) => acc.id === id);
+    /** Returns an account based on name */
+    public getAccountByName(name: string): Account {
+        return this._accountList.find((acc) => acc.name === name);
     }
 
     /** Adds an account object to the account list */
-    private _addAccToList(id: string, characters: number[]): boolean {
-        if (this.getAccountByID(id) != undefined) return false;
+    private _addAccToList(name: string, password: string, characters: number[]): boolean {
+        if (this.getAccountByName(name) != undefined) return false;
 
-        var newAcc = new Account();
-        newAcc.id = id;
+        var newAcc = new Account(name, password);
         newAcc.characters = characters;
         this._accountList.push(newAcc);
         return true;
@@ -57,30 +56,40 @@ export class AccountHandler {
     }
 
     /** Create an account (if it doesn't already exist), then add it to the JSON file
-    * Returns 0 if failed, 1 if waiting, 2 if successful */
-    public createAccountAsync(id: string): number {
+    * Returns negative if failed, 1 if waiting, 2 if successful
+    * -1 if wrong data, -2 if account already exists, -3 if unknown error */
+    public createAccountAsync(name: string, password: string): number {
         if (this._listReady == false) {
             var self = this;
             setTimeout(function() { self.createAccountAsync }, 150);
             return 1;
         }
-        if (this._addAccToList(id, []) == false) {
-            return 0;
+        // Check if data is correct
+        if (!name || !password) {
+            return -1;
+        }
+        // Check if account exists
+        if (this.getAccountByName(name)) {
+            return -2;
+        }
+        // Attempt to create account
+        if (this._addAccToList(name, password, []) == false) {
+            return -3;
         }
 
         this._updateJSON();
         return 2;
     }
 
-    /** Delete an account through id
+    /** Delete an account through name
     * Returns 0 if failed, 1 if waiting, 2 if successful */
-    public deleteAccountAsync(id: string): number {
+    public deleteAccountAsync(name: string): number {
         if (this._listReady == false) {
             var self = this;
             setTimeout(function() { self.deleteAccountAsync }, 150);
             return 1;
         }
-        var acc = this.getAccountByID(id);
+        var acc = this.getAccountByName(name);
         if (acc) {
             this._accountList.splice(this._accountList.indexOf(acc));
             this._updateJSON();
@@ -90,11 +99,20 @@ export class AccountHandler {
     }
 
     /** Associate character ID to account */
-    public associateChar(charID: number, accID: string): void {
-        var acc = this.getAccountByID(accID);
-        if (acc) {
-            acc.characters.push(charID);
-        }
+    public associateChar(charID: number, accName: string): void {
+        var acc = this.getAccountByName(accName);
+        if (!acc) return;
+
+        acc.addCharacter(charID);
         this._updateJSON();
+    }
+
+    /** Login with account - checks whether account matches given password */
+    public loginAccount(accName: string, accPass: string): boolean {
+        var acc = this.getAccountByName(accName);
+        if (acc) {
+            if (acc.password === accPass) return true;
+        }
+        return false;
     }
 }

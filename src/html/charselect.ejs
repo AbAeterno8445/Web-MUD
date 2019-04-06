@@ -16,6 +16,12 @@
   <body>
     <div>
       <h1>Character selection</h1>
+      <div>
+        <p>You are logged in as <%= accName %>.</p>
+        <form action="/logout">
+          <input type="submit" value="Log out">
+        </form>
+      </div>
       <% charList.forEach(function(char, i) { %>
         <div style="width:auto; border:1px solid #ccc;">
           <canvas class="charCanvas" id="chCanvas<%=i%>"></canvas><br>

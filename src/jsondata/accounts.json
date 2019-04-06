@@ -1,1 +1,1 @@
-{ "accounts": [{ "id": "114757785350800289248", "characters": [1, 2, 3] }] }
+{"accounts":[{"name":"admin","password":"admin","characters":[4]},{"name":"test","password":"test","characters":[]}]}

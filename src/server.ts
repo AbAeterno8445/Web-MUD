@@ -8,7 +8,6 @@ const socketIO = require('socket.io');
 const session = require('express-session');
 const sharedsession = require("express-socket.io-session");
 const uuid = require('uuid');
-const {OAuth2Client} = require('google-auth-library');
 
 // Init express app & server
 var app = express();
@@ -17,7 +16,6 @@ var io = socketIO(server);
 var accHandler = new AccountHandler();
 var charHandler = new CharacterHandler();
 var sessionHandler = new SessionHandler();
-const client = new OAuth2Client("858342257243-cq6gsi1djkukgq3vlhkat4ir3maa922m.apps.googleusercontent.com");
 
 app.set("views", __dirname);
 app.set("view engine", "ejs");
@@ -39,17 +37,12 @@ io.use(sharedsession(sessionMiddleware, {
 app.use('/static', express.static(__dirname + '/static'));
 app.use(express.urlencoded());
 
-// Google verify
-async function verify(token: string, callback: any) {
-  const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: "858342257243-cq6gsi1djkukgq3vlhkat4ir3maa922m.apps.googleusercontent.com",
-  });
-  const payload = ticket.getPayload();
-  const userid = payload['sub'];
-
-  callback(userid);
-};
+// Pages requiring no current session
+function noSessionPage(req: any, res: any, next: any) {
+  if (sessionHandler.findSession(req.sessionID)) {
+    res.redirect('/charselect');
+  } else next();
+}
 
 // Session authentication
 function authSession(req: any, res: any, next: any) {
@@ -68,35 +61,68 @@ function authSessionChar(req: any, res: any, next: any) {
   } else res.redirect('/');
 }
 
-// Routing
-app.get('/', function(request, response) {
+//// Routing
+// Index page
+app.get('/', noSessionPage, function(request, response) {
   response.render('index.ejs');
 });
 
-// Google sign-in
-app.post('/tokensignin', function(request, response) {
-  verify(request.body.idtoken, function(userid: string) {
-    accHandler.createAccountAsync(userid);
-    sessionHandler.createSession(request.sessionID, userid);
+// Account creation
+app.get('/acc_create', function(request, response) {
+  response.render('createaccount.ejs');
+});
+
+// Account creation process
+app.post('/acc_create_act', function(request, response) {
+  var accName = request.body.inp_name;
+  var accPass = request.body.inp_password;
+  var result = accHandler.createAccountAsync(accName, accPass);
+
+  if (result == 2) {
+    // Account creation successful
+    response.redirect('/');
+  } else {
+    response.redirect('/acc_create');
+  }
+});
+
+// Account login
+app.post('/acc_login', function(request, response) {
+  var accName = request.body.inp_name;
+  var accPass = request.body.inp_password;
+
+  if (accHandler.loginAccount(accName, accPass)) {
+    sessionHandler.createSession(request.sessionID, accName);
     response.redirect('/charselect');
-  });
+  } else {
+    response.redirect('/');
+  }
+});
+
+// Account logout
+app.get('/logout', function(request, response) {
+  sessionHandler.logoutSession(request.sessionID);
+  response.redirect('/');
 });
 
 // Character selection
 app.get('/charselect', authSession, function(request, response) {
-  var accID = sessionHandler.getSessionAccID(request.sessionID);
-  var acc = accHandler.getAccountByID(accID);
+  var accName = sessionHandler.getSessionAccName(request.sessionID);
+  var acc = accHandler.getAccountByName(accName);
+
+  // Create table of acc characters from char IDs and char handler
   var charList: any[] = new Array();
   acc.characters.forEach(charID => {
     charList.push(charHandler.getCharByID(charID));
   });
-  response.render('charselect.ejs', {charList});
+
+  response.render('charselect.ejs', {charList, accName});
 });
 
 // Character selection processing
 app.get('/charselect_act', authSession, function(request, response) {
   var session = sessionHandler.findSession(request.sessionID);
-  var acc = accHandler.getAccountByID(session.accID);
+  var acc = accHandler.getAccountByName(session.accName);
   var charID = +request.query.charID;
 
   console.log("Session " + request.sessionID + " attempts to log with character " + charID);
@@ -124,8 +150,8 @@ app.post('/createchar_act', authSession, function(request, response) {
   console.log("Session " + request.sessionID + " attempts to create char " + char_name + ", spr " + char_sprite);
   console.log("Result: " + result);
   if (result == 2) {
-    var accID = sessionHandler.getSessionAccID(request.sessionID);
-    accHandler.associateChar(charHandler.getCharByName(char_name).charID, accID);
+    var accName = sessionHandler.getSessionAccName(request.sessionID);
+    accHandler.associateChar(charHandler.getCharByName(char_name).charID, accName);
     response.redirect('/charselect');
   } else {
     response.redirect('/createchar');

@@ -9,28 +9,35 @@ export class SessionHandler {
         return this._sessionList.find((sess) => sess.sessionID === sessionID);
     }
 
-    public getSessionAccID(sessionID: string): string {
+    public getSessionAccName(sessionID: string): string {
         var session = this.findSession(sessionID);
         if (session) {
-            return session.accID;
+            return session.accName;
         }
         return undefined;
     }
 
-    public createSession(sessionID: string, accID: string) {
+    public createSession(sessionID: string, accName: string) {
         if (this.findSession(sessionID) != undefined) return;
-        this._sessionList.push(new Session(sessionID, accID));
+        this._sessionList.push(new Session(sessionID, accName));
+    }
+
+    public logoutSession(sessionID: string) {
+        var sess = this.findSession(sessionID);
+        if (sess) {
+            this._sessionList.splice(this._sessionList.indexOf(sess));
+        }
     }
 }
 
 class Session {
     public sessionID: string;
-    public accID: string;
+    public accName: string;
     public selectedChar: number;
     
-    constructor(sessionID: string, accID: string) {
+    constructor(sessionID: string, accName: string) {
         this.sessionID = sessionID;
-        this.accID = accID;
+        this.accName = accName;
     }
 
     public setSelectedChar(charID: number) {
