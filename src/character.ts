@@ -8,5 +8,17 @@ export class Character extends Entity {
         this._charID = id;
     }
 
+    // GET character ID
     get charID(): number { return this._charID; }
+
+    /** Returns the data dictionary for client-side characters */
+    public getClientDict(): any {
+        var dataDict = {
+            id: this.charID,
+            drawX: this.drawX,
+            drawY: this.drawY,
+            tileID: this.tileID
+        }
+        return dataDict;
+    }
 }

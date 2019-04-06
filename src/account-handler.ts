@@ -50,7 +50,7 @@ export class AccountHandler {
         var accObj = {
             "accounts": this._accountList
         }
-        fs.writeFile(this._listPath, JSON.stringify(accObj), function(err: any) {
+        fs.writeFile(this._listPath, JSON.stringify(accObj, null, 4), function(err: any) {
             if (err) throw err;
         });
     }

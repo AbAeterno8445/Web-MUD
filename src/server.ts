@@ -169,34 +169,34 @@ server.listen(5000, function() {
 });
 
 const players: any = {};
+function updatePlayerChar(socketID: any, character: any): void {
+  if (players[socketID]) {
+    players[socketID] = character.getClientDict();
+  }
+}
+
 io.on('connection', function(socket: any) {
   var playerSession = sessionHandler.findSession(socket.handshake.sessionID);
   var playerChar = charHandler.getCharByID(playerSession.selectedChar);
 
   // Player joins
   socket.on('new player', function() {
-    players[socket.id] = {
-      x: 300,
-      y: 300,
-      char: playerChar.tileID
-    };
+    playerChar.moveTo(6, 6);
+    players[socket.id] = playerChar.getClientDict();
   });
 
   // Player movement
   socket.on('movement', function(data: any) {
-    var player = players[socket.id] || {};
-    if (data.left) {
-      player.x -= 5;
-    }
     if (data.up) {
-      player.y -= 5;
+      playerChar.moveDir(0);
+    } else if (data.right) {
+      playerChar.moveDir(1);
+    } else if (data.down) {
+      playerChar.moveDir(2);
+    } else if (data.left) {
+      playerChar.moveDir(3);
     }
-    if (data.right) {
-      player.x += 5;
-    }
-    if (data.down) {
-      player.y += 5;
-    }
+    updatePlayerChar(socket.id, playerChar);
   });
 
   // Player disconnects
@@ -205,7 +205,16 @@ io.on('connection', function(socket: any) {
   });
 });
 
-// Send state to players
+// Process tick
 setInterval(function() {
+  // Update player characters
+  for (var pl in players) {
+    var char = charHandler.getCharByID(players[pl].id);
+    if (char) {
+      char.update();
+    }
+  }
+
+  // Send state to players
   io.sockets.emit('state', players);
 }, 1000 / 60);

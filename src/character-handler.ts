@@ -1,5 +1,4 @@
-import {Character} from "./character"
-import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from "constants";
+import {Character} from "./character";
 
 const fs = require('fs');
 const path = require('path');
@@ -64,7 +63,7 @@ export class CharacterHandler {
         var charObj = {
             "characters": this._characterList
         }
-        fs.writeFile(this._listPath, JSON.stringify(charObj), function(err: any) {
+        fs.writeFile(this._listPath, JSON.stringify(charObj, null, 4), function(err: any) {
             if (err) throw err;
         });
     }

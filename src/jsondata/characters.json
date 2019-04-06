@@ -1,1 +1,22 @@
-{"characters":[{"_posX":0,"_posY":0,"_tileID":"77","_flags":[],"_name":"fdg","_level":1,"_dmgPhys":1,"_maxhp":20,"_hp":20,"_charID":1},{"_posX":0,"_posY":0,"_tileID":"105","_flags":[],"_name":"SERRUS","_level":1,"_dmgPhys":1,"_maxhp":20,"_hp":20,"_charID":2},{"_posX":0,"_posY":0,"_tileID":"128","_flags":[],"_name":"pepius","_level":1,"_dmgPhys":1,"_maxhp":20,"_hp":20,"_charID":3},{"_posX":0,"_posY":0,"_tileID":"105","_flags":[],"_name":"lord lechuga","_level":1,"_dmgPhys":1,"_maxhp":20,"_hp":20,"_charID":4}]}
+{
+    "characters": [
+        {
+            "_posX": 0,
+            "_posY": 0,
+            "_tileID": "77",
+            "_flags": [],
+            "_cooldownList": {
+                "mvSpeed": 0,
+                "attSpeed": 0
+            },
+            "_name": "lord cebolla",
+            "_level": 1,
+            "_mvSpeed": 0.4,
+            "_attSpeed": 0.6,
+            "_maxhp": 20,
+            "_dmgPhys": 1,
+            "_hp": 20,
+            "_charID": 1
+        }
+    ]
+}

@@ -4,6 +4,8 @@ export class Tile {
      */
     private _posX: number;
     private _posY: number;
+    private _drawX: number;
+    private _drawY: number;
     private _tileID: number;
     private _flags: string[];
 
@@ -21,6 +23,10 @@ export class Tile {
     // GET/SET posY
     get posY(): number { return this._posY; }
     set posY(y: number) { this._posY = y; }
+
+    // GET draw position
+    get drawX(): number { return this._posX * 32; }
+    get drawY(): number { return this._posY * 32; }
 
     // GET/SET tileID
     get tileID(): number { return this._tileID; }

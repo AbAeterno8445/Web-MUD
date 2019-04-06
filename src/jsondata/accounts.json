@@ -1,1 +1,11 @@
-{"accounts":[{"name":"admin","password":"admin","characters":[4]},{"name":"test","password":"test","characters":[]}]}
+{
+    "accounts": [
+        {
+            "name": "admin",
+            "password": "admin",
+            "characters": [
+                1
+            ]
+        }
+    ]
+}
