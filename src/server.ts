@@ -180,7 +180,7 @@ server.listen(5000, function() {
 
 const players: any = {};
 const testMap: Map = new Map();
-testMap.loadFromFile("test.json");
+testMap.loadFromFile("towne.json");
 function updatePlayerChar(socketID: any, character: any): void {
   if (players[socketID]) {
     players[socketID] = character.getClientDict();
