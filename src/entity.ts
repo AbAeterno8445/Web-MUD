@@ -71,20 +71,13 @@ export class Entity extends Tile {
         this._cooldownList["mvSpeed"] = this._mvSpeed * 60;
     }
 
-    /** Moves the entity one directional spot   
-     * 0 is north, 1 is east, 2 is south, 3 is west 
+    /** Moves the entity in one direction   
+     * Receives the tiles moved for each axis   
      * Uses entity cooldown */
-    public moveDir(dir: number): void {
+    public moveDir(xMov: number, yMov: number): void {
         if (this.canMove()) {
-            if (dir === 0) {
-                this.posY--;
-            } else if (dir === 1) {
-                this.posX++;
-            } else if (dir === 2) {
-                this.posY++;
-            } else if (dir === 3) {
-                this.posX--;
-            }
+            this.posX += xMov;
+            this.posY += yMov;
             this.moveResetCD();
         }
     }

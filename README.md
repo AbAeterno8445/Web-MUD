@@ -5,3 +5,6 @@ domain roguelike tileset "RLTiles".
 
 You can find the original tileset at:
 http://rltiles.sf.net
+
+# Tile flags
+w - wall, blocks movement

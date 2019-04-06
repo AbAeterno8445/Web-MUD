@@ -195,22 +195,32 @@ io.on('connection', function(socket: any) {
   // Player joins
   socket.on('new player', function() {
     playerAcc.inGame = true;  // Remove this to enable double-logging
-    playerChar.moveTo(6, 6);
+    playerChar.moveTo(2, 2);
     players[socket.id] = playerChar.getClientDict();
     io.sockets.connected[socket.id].emit('mapdata', testMap.getClientDict());
   });
 
   // Player movement
   socket.on('movement', function(data: any) {
-    if (data.up) {
-      playerChar.moveDir(0);
-    } else if (data.right) {
-      playerChar.moveDir(1);
-    } else if (data.down) {
-      playerChar.moveDir(2);
-    } else if (data.left) {
-      playerChar.moveDir(3);
-    }
+    var plX = playerChar.posX;
+    var plY = playerChar.posY;
+    if (data.n) { // North
+      if (testMap.tileCollFree(plX, plY-1)) playerChar.moveDir(0, -1);
+    } else if (data.ne) { // Northeast
+      if (testMap.tileCollFree(plX+1, plY-1)) playerChar.moveDir(1, -1);
+    } else if (data.e) { // East
+      if (testMap.tileCollFree(plX+1, plY)) playerChar.moveDir(1, 0);
+    } else if (data.se) { // Southeast
+      if (testMap.tileCollFree(plX+1, plY+1)) playerChar.moveDir(1, 1);
+    } else if (data.s) { // South
+      if (testMap.tileCollFree(plX, plY+1)) playerChar.moveDir(0, 1);
+    } else if (data.sw) { // Southwest
+      if (testMap.tileCollFree(plX-1, plY+1)) playerChar.moveDir(-1, 1);
+    } else if (data.w) { // West
+      if (testMap.tileCollFree(plX-1, plY)) playerChar.moveDir(-1, 0);
+    } else if (data.nw) { // Northwest
+      if (testMap.tileCollFree(plX-1, plY-1)) playerChar.moveDir(-1, -1);
+    } 
     updatePlayerChar(socket.id, playerChar);
   });
 

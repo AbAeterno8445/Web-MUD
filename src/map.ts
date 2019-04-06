@@ -122,4 +122,15 @@ export class Map {
             }
         }
     }
+
+    /** Returns whether the given position is currently walkable */
+    public tileCollFree(x: number, y: number): boolean {
+        var tile = this._mapTiles[y][x];
+        if (tile) {
+            if (!tile.hasFlag("w")) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -49,4 +49,10 @@ export class Tile {
     public clearFlags(): void {
         this._flags = new Array();
     }
+
+    /** Returns whether the tile has the given flag */
+    public hasFlag(f: string): boolean {
+        if (this._flags.find((flag) => flag === f)) return true;
+        return false;
+    }
 }

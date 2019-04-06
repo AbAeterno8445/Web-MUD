@@ -1,41 +1,70 @@
 var socket = io();
 
 var movement = {
-    up: false,
-    down: false,
-    left: false,
-    right: false
+    n: false,
+    ne: false,
+    e: false,
+    se: false,
+    s: false,
+    sw: false,
+    w: false,
+    nw: false
 }
 document.addEventListener('keydown', function(event) {
+    // Numbers based on numpad
     switch (event.keyCode) {
-        case 65: // A
-        movement.left = true;
-        break;
-        case 87: // W
-        movement.up = true;
-        break;
-        case 68: // D
-        movement.right = true;
-        break;
-        case 83: // S
-        movement.down = true;
-        break;
+      case 104: // num 8 - north
+      movement.n = true;
+      break;
+      case 105: // num 9 - northeast
+      movement.ne = true;
+      break;
+      case 102: // num 6 - east
+      movement.e = true;
+      break;
+      case 99: // num 3 - southeast
+      movement.se = true;
+      break;
+      case 98: // num 2 - south
+      movement.s = true;
+      break;
+      case 97: // num 1 - southwest
+      movement.sw = true;
+      break;
+      case 100: // num 4 - west
+      movement.w = true;
+      break;
+      case 103: // num 7 - northwest
+      movement.nw = true;
+      break;
     }
 });
 document.addEventListener('keyup', function(event) {
 switch (event.keyCode) {
-    case 65: // A
-    movement.left = false;
-    break;
-    case 87: // W
-    movement.up = false;
-    break;
-    case 68: // D
-    movement.right = false;
-    break;
-    case 83: // S
-    movement.down = false;
-    break;
+  case 104: // num 8 - north
+  movement.n = false;
+  break;
+  case 105: // num 9 - northeast
+  movement.ne = false;
+  break;
+  case 102: // num 6 - east
+  movement.e = false;
+  break;
+  case 99: // num 3 - southeast
+  movement.se = false;
+  break;
+  case 98: // num 2 - south
+  movement.s = false;
+  break;
+  case 97: // num 1 - southwest
+  movement.sw = false;
+  break;
+  case 100: // num 4 - west
+  movement.w = false;
+  break;
+  case 103: // num 7 - northwest
+  movement.nw = false;
+  break;
 }
 });
 
