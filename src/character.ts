@@ -13,14 +13,8 @@ export class Character extends Entity {
 
     /** Returns the data dictionary for client-side characters */
     public getClientDict(): any {
-        var dataDict = {
-            id: this.charID,
-            drawX: this.drawX,
-            drawY: this.drawY,
-            tileID: this.tileID,
-            hp: this.hp,
-            maxhp: this.maxhp
-        }
+        var dataDict = super.getClientDict();
+        dataDict["id"] = this._charID;
         return dataDict;
     }
 }

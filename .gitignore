@@ -13,3 +13,4 @@
 
 # npm debug
 /npm-debug.log
+/src/npm-debug.log

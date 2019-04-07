@@ -1,3 +1,5 @@
+import {MapManager} from './mapManager';
+
 var socket = io();
 
 var movement = {
@@ -73,32 +75,16 @@ setInterval(function() {
   socket.emit('movement', movement);
 }, 1000 / 60);
 
+const tileSheetImg = new Image();
+tileSheetImg.src = "https://opengameart.org/sites/default/files/DungeonCrawl_ProjectUtumnoTileset.png";
+
 const canvas = <HTMLCanvasElement> document.getElementById('canvas');
-canvas.width = 800;
-canvas.height = 600;
-const context = canvas.getContext('2d');
+const mapManager: MapManager = new MapManager(tileSheetImg, canvas, 800, 600);
 
-const playerImg = new Image();
-playerImg.src = "https://opengameart.org/sites/default/files/DungeonCrawl_ProjectUtumnoTileset.png";
-
-var map: any = undefined;
 socket.on('mapdata', function(mapdata: any) {
-  map = mapdata;
+  mapManager.mapTiles = mapdata["tiles"];
 });
 
 socket.on('state', function(players: any) {
-  context.clearRect(0, 0, 800, 600);
-  // Draw map
-  if (map) {
-    map["tiles"].forEach(function(row: any, i: number) {
-      row.forEach(function(tile: any, j: number) {
-        context.drawImage(playerImg, (tile._tileID % 64) * 32, Math.floor(tile._tileID / 64) * 32, 32, 32, j * 32, i * 32, 32, 32);
-      });
-    });
-  }
-  // Draw players
-  for (var id in players) {
-    var player = players[id];
-    context.drawImage(playerImg, (player.tileID % 64) * 32, Math.floor(player.tileID / 64) * 32, 32, 32, player.drawX, player.drawY, 32, 32);
-  }
+  mapManager.drawScene(players);
 });

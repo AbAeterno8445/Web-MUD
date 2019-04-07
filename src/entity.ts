@@ -60,6 +60,19 @@ export class Entity extends Tile {
     // GET dmgPhys
     get dmgPhys(): number { return this._dmgPhys; }
 
+    /** Returns the data dictionary for client-side entities    
+     * Client-side entities should be structured based on this data */
+    public getClientDict(): any {
+        var dataDict = {
+            drawX: this.drawX,
+            drawY: this.drawY,
+            tileID: this.tileID,
+            hp: this.hp,
+            maxhp: this.maxhp
+        }
+        return dataDict;
+    }
+
     /** Whether entity can move */
     public canMove(): boolean {
         if (this._cooldownList["mvSpeed"] === 0) return true;

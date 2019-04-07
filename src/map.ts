@@ -77,7 +77,8 @@ export class Map {
         }.bind(this));
     }
 
-    /** Returns the client data dictionary for this map */
+    /** Returns the client data dictionary for this map     
+     * Client side map should be constructed based on this data */
     public getClientDict(): any {
         var clientDict = {
             tiles: this._mapTiles
