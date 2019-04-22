@@ -1,4 +1,5 @@
 import {MapManager} from './mapManager';
+import { ClientEntity } from './clientEntity';
 
 var socket = io();
 
@@ -70,6 +71,9 @@ switch (event.keyCode) {
 }
 });
 
+// Current player entity
+var playerEnt: ClientEntity = new ClientEntity(0, 0, 0);
+
 socket.emit('new player');
 setInterval(function() {
   socket.emit('movement', movement);
@@ -79,12 +83,28 @@ const tileSheetImg = new Image();
 tileSheetImg.src = "https://opengameart.org/sites/default/files/DungeonCrawl_ProjectUtumnoTileset.png";
 
 const canvas = <HTMLCanvasElement> document.getElementById('canvas');
-const mapManager: MapManager = new MapManager(tileSheetImg, canvas, 800, 600);
+var mapManager: MapManager = new MapManager(tileSheetImg, canvas, 800, 600);
+mapManager.player = playerEnt;
 
+// Receive map data from server
 socket.on('mapdata', function(mapdata: any) {
   mapManager.mapTiles = mapdata["tiles"];
 });
 
+// Update other players' states
 socket.on('state', function(players: any) {
   mapManager.drawScene(players);
+});
+
+// Change player tile
+socket.on('setplayertile', function(data: any) {
+  mapManager.setPlayerTile(data.id, data.tile);
+});
+
+// Move a player, id -1 is current player
+socket.on('mvplayer', function(data: any) {
+  if (data.id == -1) {
+    playerEnt.posX = data.x;
+    playerEnt.posY = data.y;
+  }
 });

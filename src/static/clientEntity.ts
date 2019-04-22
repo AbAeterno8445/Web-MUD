@@ -1,24 +1,28 @@
 /** Client-side entity class used for drawing   
  * Should be structured based on server-side entities' "getClientDict" function */
 export class ClientEntity {
-    private _drawX: number;
-    private _drawY: number;
+    private _posX: number;
+    private _posY: number;
     private _tileID: number;
     private _hp: number;
     private _maxhp: number;
 
     constructor(drawX: number, drawY: number, tileID: number) {
-        this._drawX = drawX;
-        this._drawY = drawY;
+        this._posX = drawX;
+        this._posY = drawY;
         this._tileID = tileID;
     }
 
-    // GET/SET draw positions
-    get drawX(): number { return this._drawX; }
-    set drawX(x: number) { this._drawX = x; }
+    // GET/SET positions
+    get posX(): number { return this._posX; }
+    set posX(x: number) { this._posX = x; }
 
-    get drawY(): number { return this._drawY; }
-    set drawY(y: number) { this._drawY = y; }
+    get posY(): number { return this._posY; }
+    set posY(y: number) { this._posY = y; }
+
+    // GET draw positions
+    get drawX(): number { return this._posX * 32; }
+    get drawY(): number { return this._posY * 32; }
 
     // GET/SET tile ID
     get tileID(): number { return this._tileID; }

@@ -197,6 +197,9 @@ io.on('connection', function(socket: any) {
     playerAcc.inGame = true;  // Remove this to enable double-logging
     playerChar.moveTo(2, 2);
     players[socket.id] = playerChar.getClientDict();
+    io.sockets.connected[socket.id].emit('setplayertile', {id: -1, tile: playerChar.tileID});
+
+    // Send map
     io.sockets.connected[socket.id].emit('mapdata', testMap.getClientDict());
   });
 
@@ -222,6 +225,7 @@ io.on('connection', function(socket: any) {
       if (testMap.tileCollFree(plX-1, plY-1)) playerChar.moveDir(-1, -1);
     } 
     updatePlayerChar(socket.id, playerChar);
+    io.sockets.connected[socket.id].emit('mvplayer', { id: -1, x: playerChar.posX, y: playerChar.posY });
   });
 
   // Player disconnects

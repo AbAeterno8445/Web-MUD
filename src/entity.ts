@@ -64,8 +64,8 @@ export class Entity extends Tile {
      * Client-side entities should be structured based on this data */
     public getClientDict(): any {
         var dataDict = {
-            drawX: this.drawX,
-            drawY: this.drawY,
+            posX: this.posX,
+            posY: this.posY,
             tileID: this.tileID,
             hp: this.hp,
             maxhp: this.maxhp
