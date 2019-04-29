@@ -72,10 +72,8 @@ switch (event.keyCode) {
 }
 });
 
-// Current player entity
-var playerEnt: ClientEntity = new ClientEntity(0, 0, 0);
+socket.emit('newpl');
 
-socket.emit('new player');
 setInterval(function() {
   socket.emit('movement', movement);
 }, 1000 / 60);
@@ -87,28 +85,37 @@ const mapCanvas = <HTMLCanvasElement> document.getElementById('cv_maplayer');
 const entityCanvas = <HTMLCanvasElement> document.getElementById('cv_entitylayer');
 var mapManager: MapManager = new MapManager(tileSheetImg, mapCanvas, 800, 600);
 var entityManager: EntityManager = new EntityManager(tileSheetImg, entityCanvas, 800, 600);
-entityManager.player = playerEnt;
 
 // Receive map data from server
 socket.on('mapdata', function(mapdata: any) {
   mapManager.mapTiles = mapdata["tiles"];
+  mapManager.drawScene(entityManager.mainPlayer.posX, entityManager.mainPlayer.posY);
 });
 
-// Update other players' states
-socket.on('state', function(players: any) {
-  mapManager.drawScene(playerEnt.posX, playerEnt.posY);
-  entityManager.drawEntities();
+// Change entity tile
+socket.on('setentitytile', function(data: any) {
+  entityManager.setEntityTile(data.id, data.tile);
 });
 
-// Change player tile
-socket.on('setplayertile', function(data: any) {
-  entityManager.setPlayerTile(data.id, data.tile);
+// Creates an entity
+socket.on('newentity', function(data: any) {
+  entityManager.newEntity(data);
 });
 
-// Move a player, id -1 is current player
-socket.on('mvplayer', function(data: any) {
-  if (data.id == -1) {
-    playerEnt.posX = data.x;
-    playerEnt.posY = data.y;
+// Set an entity's data
+socket.on('setentitydata', function(data: any) {
+  entityManager.setEntityData(data.id, data.entData);
+});
+
+// Moves an entity, id -1 is current player
+socket.on('mventity', function(data: any) {
+  entityManager.moveEntity(data.id, data.x, data.y);
+  if (data.id === -1) {
+    mapManager.drawScene(entityManager.mainPlayer.posX, entityManager.mainPlayer.posY);
   }
+});
+
+// Player disconnection - remove its entity
+socket.on('playerDisconnect', function(data: any) {
+  entityManager.removeEntity(data.id);
 });

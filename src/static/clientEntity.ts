@@ -34,4 +34,20 @@ export class ClientEntity {
 
     get maxhp(): number { return this._maxhp; }
     set maxhp(h: number) { this._maxhp = h; }
+
+    /** Sets the entity's data from a given dictionary  
+     *  Dictionary format is based on server entity's getClientDict() function */
+    public setData(dataDict: any) {
+        this._posX = dataDict.posX;
+        this._posY = dataDict.posY;
+        this._tileID = dataDict.tileID;
+        this._hp = dataDict.hp;
+        this._maxhp = dataDict.maxhp;
+    }
+
+    /** Moves the entity to the given position */
+    public moveTo(x: number, y: number) {
+        this._posX = x;
+        this._posY = y;
+    }
 }

@@ -8,6 +8,7 @@ export class Entity extends Tile {
     };
 
     // Attributes
+    private _id: number;
     private _name: string;
     private _level: number;
     private _hp: number;
@@ -16,8 +17,9 @@ export class Entity extends Tile {
     private _attSpeed: number;
     private _dmgPhys: number;
 
-    constructor(name: string, x: number, y: number, sprite: number) {
+    constructor(id: number, name: string, x: number, y: number, sprite: number) {
         super(x, y, sprite);
+        this._id = id;
         this._name = name;
         this._level = 1;
         this._mvSpeed = 0.4;
@@ -27,6 +29,9 @@ export class Entity extends Tile {
         
         this.hp = this.maxhp;
     }
+
+    // GET id
+    get id(): number { return this._id; }
 
     // GET/SET name
     get name(): string { return this._name; }
@@ -64,6 +69,7 @@ export class Entity extends Tile {
      * Client-side entities should be structured based on this data */
     public getClientDict(): any {
         var dataDict = {
+            id: this.id,
             posX: this.posX,
             posY: this.posY,
             tileID: this.tileID,

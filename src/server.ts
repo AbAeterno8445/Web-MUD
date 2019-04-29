@@ -113,8 +113,8 @@ app.get('/charselect', authSession, function(request, response) {
 
   // Create table of acc characters from char IDs and char handler
   var charList: any[] = new Array();
-  acc.characters.forEach(charID => {
-    charList.push(charHandler.getCharByID(charID));
+  acc.characters.forEach(id => {
+    charList.push(charHandler.getCharByID(id));
   });
 
   response.render('charselect.ejs', {charList, accName});
@@ -124,12 +124,12 @@ app.get('/charselect', authSession, function(request, response) {
 app.get('/charselect_act', authSession, function(request, response) {
   var session = sessionHandler.findSessionByID(request.sessionID);
   var acc = accHandler.getAccountByName(session.accName);
-  var charID = +request.query.charID;
+  var id = +request.query.id;
 
-  console.log("Session " + request.sessionID + " attempts to log with character " + charID);
-  if (acc.hasCharacter(charID)) {
+  console.log("Session " + request.sessionID + " attempts to log with character " + id);
+  if (acc.hasCharacter(id)) {
     console.log("SUCCESS");
-    session.setSelectedChar(charID);
+    session.setSelectedChar(id);
     response.redirect('/game');
   } else {
     console.log("DENIED");
@@ -152,7 +152,7 @@ app.post('/createchar_act', authSession, function(request, response) {
   console.log("Result: " + result);
   if (result == 2) {
     var accName = sessionHandler.getSessionAccName(request.sessionID);
-    accHandler.associateChar(charHandler.getCharByName(char_name).charID, accName);
+    accHandler.associateChar(charHandler.getCharByName(char_name).id, accName);
     response.redirect('/charselect');
   } else {
     response.redirect('/createchar');
@@ -181,9 +181,13 @@ server.listen(5000, function() {
 const players: any = {};
 const testMap: Map = new Map();
 testMap.loadFromFile("huge.json");
-function updatePlayerChar(socketID: any, character: any): void {
-  if (players[socketID]) {
-    players[socketID] = character.getClientDict();
+
+/** Sends data to other clients, ignoring the given socket */
+function sendOthers(socketID: any, channel: string, data: any): void {
+  for (var plSocket in players) {
+    if (plSocket === socketID) continue;
+
+    io.sockets.connected[plSocket].emit(channel, data);
   }
 }
 
@@ -193,14 +197,23 @@ io.on('connection', function(socket: any) {
   var playerChar = charHandler.getCharByID(playerSession.selectedChar);
 
   // Player joins
-  socket.on('new player', function() {
+  socket.on('newpl', function() {
     playerAcc.inGame = true;  // Remove this to enable double-logging
     playerChar.moveTo(2, 2);
-    players[socket.id] = playerChar.getClientDict();
-    io.sockets.connected[socket.id].emit('setplayertile', {id: -1, tile: playerChar.tileID});
+    players[socket.id] = playerChar;
 
-    // Send map
+    // Send map data to player
     io.sockets.connected[socket.id].emit('mapdata', testMap.getClientDict());
+    // Set player data
+    io.sockets.connected[socket.id].emit('setentitydata', {id: -1, entData: playerChar.getClientDict()});
+    // New player creation for others
+    sendOthers(socket.id, 'newentity', playerChar.getClientDict());
+    // Other player creation for new player
+    for (var pl in players) {
+      if (pl === socket.id) continue;
+      var player = players[pl];
+      io.sockets.connected[socket.id].emit('newentity', player.getClientDict());
+    }
   });
 
   // Player movement
@@ -224,12 +237,13 @@ io.on('connection', function(socket: any) {
     } else if (data.nw) { // Northwest
       if (testMap.tileCollFree(plX-1, plY-1)) playerChar.moveDir(-1, -1);
     } 
-    updatePlayerChar(socket.id, playerChar);
-    io.sockets.connected[socket.id].emit('mvplayer', { id: -1, x: playerChar.posX, y: playerChar.posY });
+    io.sockets.connected[socket.id].emit('mventity', {id: -1, x: playerChar.posX, y: playerChar.posY});
+    sendOthers(socket.id, 'mventity', {id: playerChar.id, x: playerChar.posX, y: playerChar.posY});
   });
 
   // Player disconnects
   socket.on('disconnect', function() {
+    sendOthers(socket.id, 'playerDisconnect', {id: playerChar.id});
     delete players[socket.id];
     playerAcc.inGame = false;
   });
@@ -244,7 +258,4 @@ setInterval(function() {
       char.update();
     }
   }
-
-  // Send state to players
-  io.sockets.emit('state', players);
 }, 1000 / 60);

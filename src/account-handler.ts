@@ -99,11 +99,11 @@ export class AccountHandler {
     }
 
     /** Associate character ID to account */
-    public associateChar(charID: number, accName: string): void {
+    public associateChar(id: number, accName: string): void {
         var acc = this.getAccountByName(accName);
         if (!acc) return;
 
-        acc.addCharacter(charID);
+        acc.addCharacter(id);
         this._updateJSON();
     }
 
