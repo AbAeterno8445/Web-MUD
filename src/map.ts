@@ -1,12 +1,14 @@
 import {Tile} from "./tile";
+import {dngnTiles} from "./consts/dngnTiles";
 
 const mapTileLimit = 64;
-const defaultTile = 0;
+const defaultTile = dngnTiles.UNSEEN;
 const fs = require('fs');
 const path = require('path');
 
 export class Map {
     private _mapTiles: Tile[][];
+    private _mapTileData: any = {};
     private _name: string;
     private _width: number;
     private _height: number;
@@ -55,6 +57,7 @@ export class Map {
             this._name = mapObj["name"];
             this._height = mapObj["mapTiles"].length;
             this._width = mapObj["mapTiles"][0].length;
+            this._mapTileData = mapObj["tileData"];
 
             // Tile loading
             this._mapTiles = new Array();
@@ -62,8 +65,9 @@ export class Map {
                 this._mapTiles.push([]);
                 mapObj["mapTiles"][i].forEach(function(col: string, j: number) {
                     var tileData = col.split(":");
+                    var tileID = this._mapTileData[tileData[0]];
 
-                    var newTile = new Tile(j, i, +tileData[0]);
+                    var newTile = new Tile(j, i, tileID);
 
                     // Tile flags
                     if (tileData.length > 1) {

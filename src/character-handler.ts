@@ -42,7 +42,7 @@ export class CharacterHandler {
     }
 
     /** Add character to local list */
-    private _addCharToList(id: number, name: string, spriteID: number): boolean {
+    private _addCharToList(id: number, name: string, spriteID: string): boolean {
         if (this.getCharByID(id) != undefined) return false;
 
         if (!name) return false;
@@ -71,7 +71,7 @@ export class CharacterHandler {
     /** Create a character (if name not taken), then add to JSON
      * Returns negative if failed, 1 if waiting, 2 if successful
      * -1 if ID error, -2 if name taken */
-    public createCharAsync(name: string, spriteID: number): number {
+    public createCharAsync(name: string, spriteID: string): number {
         if (this._listReady == false) {
             var self = this;
             setTimeout(function() { self.createCharAsync }, 150);

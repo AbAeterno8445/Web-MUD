@@ -9,6 +9,7 @@ const socketIO = require('socket.io');
 const session = require('express-session');
 const sharedsession = require("express-socket.io-session");
 const uuid = require('uuid');
+const path = require('path');
 
 // Init express app & server
 var app = express();
@@ -35,7 +36,8 @@ app.use(sessionMiddleware);
 io.use(sharedsession(sessionMiddleware, {
   autosave: true
 }));
-app.use('/static', express.static(__dirname + '/static'));
+app.use('/static', express.static(path.join(__dirname, 'static')));
+app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
 app.use(express.urlencoded());
 
 // Pages requiring no current session

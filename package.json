@@ -4,15 +4,15 @@
   "description": "Online web game project.",
   "main": "index.js",
   "scripts": {
-    "clean": "rimraf dist/*",
+    "clean": "rimraf dist/app/*",
     "tsc": "tsc",
-    "cphtml": "cp -r src/html/* dist/",
-    "cpjson": "cp -r src/jsondata/ dist/",
-    "bsify": "browserify src/static/game.ts -p [ tsify --noImplicitAny ] > dist/static/game.js",
-    "retjson": "cp -r dist/jsondata/ src/",
+    "cphtml": "cp -r src/html/* dist/app/",
+    "cpjson": "cp -r src/jsondata/ dist/app/",
+    "bsify": "browserify src/static/game.ts -p [ tsify --noImplicitAny ] > dist/app/static/game.js",
+    "retjson": "cp -r dist/app/jsondata/ src/",
     "build": "npm-run-all retjson clean cphtml cpjson tsc bsify",
     "dev:start": "npm-run-all build start",
-    "start": "node dist/server.js"
+    "start": "node dist/app/server.js"
   },
   "author": "Ab Aeterno",
   "license": "ISC",

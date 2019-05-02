@@ -17,7 +17,7 @@ export class Entity extends Tile {
     private _attSpeed: number;
     private _dmgPhys: number;
 
-    constructor(id: number, name: string, x: number, y: number, sprite: number) {
+    constructor(id: number, name: string, x: number, y: number, sprite: string) {
         super(x, y, sprite);
         this._id = id;
         this._name = name;

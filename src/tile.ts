@@ -4,10 +4,10 @@ export class Tile {
      */
     private _posX: number;
     private _posY: number;
-    private _tileID: number;
+    private _tileID: string;
     private _flags: string[];
 
-    constructor(x: number, y:number, id: number) {
+    constructor(x: number, y:number, id: string) {
         this._posX = x;
         this._posY = y;
         this._tileID = id;
@@ -23,8 +23,8 @@ export class Tile {
     set posY(y: number) { this._posY = y; }
 
     // GET/SET tileID
-    get tileID(): number { return this._tileID; }
-    set tileID(id: number) { this._tileID = id; }
+    get tileID(): string { return this._tileID; }
+    set tileID(id: string) { this._tileID = id; }
 
     // GET flags
     get flags(): string[] { return this._flags; }

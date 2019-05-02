@@ -1,19 +1,25 @@
 import {ClientEntity} from './clientEntity';
+import {monTiles} from './../consts/monTiles';
 
-const path = require('path');
+const defaultEntTile = monTiles.MONS_UNSEEN;
 
 export class EntityManager {
-    private _tileImg: any;
+    private _entImages: any = {};
     private _canvas: HTMLCanvasElement;
     private _canvasContext: any;
     private _entityList: any = {};
-    private _mainPlayer: ClientEntity = new ClientEntity(0, 0, 0);  // Main player
+    private _mainPlayer: ClientEntity = new ClientEntity(0, 0, defaultEntTile);  // Main player
 
-    constructor(tileSheetImg: any, canvas: HTMLCanvasElement, canvasW: number, canvasH: number) {
-        this._tileImg = tileSheetImg;
-
+    constructor(canvas: HTMLCanvasElement, canvasW: number, canvasH: number) {
         // Init canvas
         this.setCanvas(canvas, canvasW, canvasH);
+
+        // Load entity images
+        for (var img in monTiles) {
+            var entImg = new Image();
+            entImg.src = "assets/sprites/" + monTiles[img];
+            this._entImages[img] = entImg;
+        }
     }
 
     // GET main player
@@ -28,8 +34,11 @@ export class EntityManager {
     }
 
     /** Draws an entity at a given position */
-    public drawEntity(ent: ClientEntity, x: number, y: number): void {
-        this._canvasContext.drawImage(this._tileImg, (ent.tileID % 64) * 32, Math.floor(ent.tileID / 64) * 32, 32, 32, x, y, 32, 32);
+    public drawEntity(entID: string, x: number, y: number): void {
+        var entImg = this._entImages[entID];
+        if (entImg) {
+            this._canvasContext.drawImage(entImg, x, y);
+        }
     }
 
     /** Creates an entity using a dictionary with relevant data     
@@ -59,7 +68,7 @@ export class EntityManager {
     }
 
     /** Change an entity's tile, use id -1 for main player */
-    public setEntityTile(id: number, tile: number): void {
+    public setEntityTile(id: number, tile: string): void {
         if (id === -1) {
             this._mainPlayer.tileID = tile;
         } else if (this._entityList[id]) {
@@ -88,19 +97,14 @@ export class EntityManager {
         for (var e in this._entityList) {
             var ent: ClientEntity = this._entityList[e];
             if (ent) {
-                this.drawEntity(ent, drawOffsetX + ent.posX * 32, drawOffsetY + ent.posY * 32);
+                this.drawEntity(ent.tileID, drawOffsetX + ent.posX * 32, drawOffsetY + ent.posY * 32);
             }
         };
 
         // Draw player (always centered)
         if (this._mainPlayer) {
-            this.drawEntity(this._mainPlayer, this._canvas.width / 2 - 16, this._canvas.height / 2 - 16);
+            console.log(this._mainPlayer.tileID);
+            this.drawEntity(this._mainPlayer.tileID, this._canvas.width / 2 - 16, this._canvas.height / 2 - 16);
         }
-
-        var img = new Image();
-        img.onload = function() {
-            this._canvasContext.drawImage(img, 32, 32);
-        }.bind(this);
-        img.src = path.join(__dirname, '..', '..', 'assets/sprites/mon/undead/mummy_priest.png');
     }
 }

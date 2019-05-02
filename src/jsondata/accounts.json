@@ -16,16 +16,6 @@
             "characters": [
                 2
             ]
-        },
-        {
-            "inGame": false,
-            "name": "Yo",
-            "password": "123",
-            "characters": [
-                4,
-                5,
-                6
-            ]
         }
     ]
 }

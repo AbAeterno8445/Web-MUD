@@ -3,11 +3,11 @@
 export class ClientEntity {
     private _posX: number;
     private _posY: number;
-    private _tileID: number;
+    private _tileID: string;
     private _hp: number;
     private _maxhp: number;
 
-    constructor(drawX: number, drawY: number, tileID: number) {
+    constructor(drawX: number, drawY: number, tileID: string) {
         this._posX = drawX;
         this._posY = drawY;
         this._tileID = tileID;
@@ -25,8 +25,8 @@ export class ClientEntity {
     get drawY(): number { return this._posY * 32; }
 
     // GET/SET tile ID
-    get tileID(): number { return this._tileID; }
-    set tileID(tid: number) { this._tileID = tid; }
+    get tileID(): string { return this._tileID; }
+    set tileID(tid: string) { this._tileID = tid; }
 
     // GET/SET hp and maxhp
     get hp(): number { return this._hp; }

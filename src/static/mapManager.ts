@@ -1,18 +1,25 @@
+import {dngnTiles} from "./../consts/dngnTiles";
+
 export class MapManager {
     private _mapTiles = new Array();
+    private _mapTileImages: any = {};
     private _mapWidth: number = 0;
     private _mapHeight: number = 0;
     private _loaded: boolean = false;
 
-    private _tileImg: any;
     private _canvas: HTMLCanvasElement;
     private _canvasContext: any;
 
-    constructor(tileSheetImg: any, canvas: HTMLCanvasElement, canvasW: number, canvasH: number) {
-        this._tileImg = tileSheetImg;
-
+    constructor(canvas: HTMLCanvasElement, canvasW: number, canvasH: number) {
         // Init canvas
         this.setCanvas(canvas, canvasW, canvasH);
+
+        // Load tile images
+        for (var img in dngnTiles) {
+            var entImg = new Image();
+            entImg.src = "assets/sprites/" + dngnTiles[img];
+            this._mapTileImages[img] = entImg;
+        }
     }
 
     // GET/SET map tiles
@@ -29,10 +36,6 @@ export class MapManager {
         }
     }
 
-    // GET/SET tiles image
-    get tileImg(): any { return this._tileImg; }
-    set tileImg(img: any) { this._tileImg = img; }
-
     /** Set canvas and its size */
     public setCanvas(canvas: HTMLCanvasElement, canvasW: number, canvasH: number): void {
         this._canvas = canvas;
@@ -42,8 +45,11 @@ export class MapManager {
     }
 
     /** Draw a tile into the canvas */
-    private drawTile(tileID: number, x: number, y: number) {
-        this._canvasContext.drawImage(this._tileImg, (tileID % 64) * 32, Math.floor(tileID / 64) * 32, 32, 32, x, y, 32, 32);
+    private drawTile(tileID: string, x: number, y: number) {
+        var tileImg = this._mapTileImages[tileID];
+        if (tileImg) {
+            this._canvasContext.drawImage(tileImg, x, y);
+        }
     }
 
     /** Draws the map scene into the canvas     

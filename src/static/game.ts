@@ -78,17 +78,14 @@ setInterval(function() {
   socket.emit('movement', movement);
 }, 1000 / 60);
 
-const tileSheetImg = new Image();
-tileSheetImg.src = "https://opengameart.org/sites/default/files/DungeonCrawl_ProjectUtumnoTileset.png";
-
 const mapCanvas = <HTMLCanvasElement> document.getElementById('cv_maplayer');
 const entityCanvas = <HTMLCanvasElement> document.getElementById('cv_entitylayer');
-var mapManager: MapManager = new MapManager(tileSheetImg, mapCanvas, 800, 600);
-var entityManager: EntityManager = new EntityManager(tileSheetImg, entityCanvas, 800, 600);
+var mapManager: MapManager = new MapManager(mapCanvas, 800, 600);
+var entityManager: EntityManager = new EntityManager(entityCanvas, 800, 600);
 
 // Receive map data from server
 socket.on('mapdata', function(mapdata: any) {
-  mapManager.mapTiles = mapdata["tiles"];
+  mapManager.mapTiles = mapdata.tiles;
   mapManager.drawScene(entityManager.mainPlayer.posX, entityManager.mainPlayer.posY);
 });
 
