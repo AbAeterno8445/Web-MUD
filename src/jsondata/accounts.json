@@ -15,7 +15,8 @@
             "name": "test",
             "password": "test",
             "characters": [
-                2
+                2,
+                5
             ]
         }
     ]

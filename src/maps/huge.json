@@ -1,8 +1,8 @@
 {
     "name": "huge",
     "tileData": {
-        "1": "BRICK_BROWN0",
-        "2": "FROZEN0"
+        "1": "WALL_BRICK_BROWN0",
+        "2": "FLOOR_FROZEN0"
     },
     "mapTiles": [
         [
