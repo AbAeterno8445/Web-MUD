@@ -5,6 +5,7 @@ const path = require('path');
 
 export class CharacterHandler {
     private _characterList: Entity[];
+    private _charCreationList: string[];
     private _listReady = false;
     private _listPath: string;
     private _charIDcounter: number = 0;
@@ -12,10 +13,16 @@ export class CharacterHandler {
 
     constructor() {
         this._characterList = new Array();
-        this._listPath = path.join(__dirname, 'jsondata/characters.json');
 
+        // Initially available character sprites for creation
+        this._charCreationList = ["BOGGART", "DWARF", "GOBLIN", "MUMMY_PRIEST"];
+
+        this._listPath = path.join(__dirname, 'jsondata/characters.json');
         this.loadCharFile();
     }
+
+    // GET char creation list
+    get charCreationList(): string[] { return this._charCreationList; }
 
     /** Load the characters JSON file */
     public loadCharFile(): void {
@@ -45,7 +52,7 @@ export class CharacterHandler {
     private _addCharToList(id: number, name: string, spriteID: string): boolean {
         if (this.getCharByID(id) != undefined) return false;
 
-        if (!name) return false;
+        if (!name || !spriteID) return false;
 
         // Limit name to 16 characters
         name = name.substring(0, 16);

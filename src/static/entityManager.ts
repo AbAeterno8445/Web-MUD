@@ -1,7 +1,7 @@
 import {ClientEntity} from './clientEntity';
 import {monTiles} from './../consts/monTiles';
 
-const defaultEntTile = monTiles.MONS_UNSEEN;
+const defaultEntTile = monTiles.UNSEEN;
 
 export class EntityManager {
     private _entImages: any = {};

@@ -3,6 +3,7 @@ import {AccountHandler} from './account-handler';
 import {CharacterHandler} from './character-handler';
 import {SessionHandler} from './session-handler';
 import {Map} from './map';
+import {monTiles} from './consts/monTiles';
 
 const http = require('http');
 const socketIO = require('socket.io');
@@ -116,10 +117,13 @@ app.get('/charselect', authSession, function(request, response) {
   // Create table of acc characters from char IDs and char handler
   var charList: any[] = new Array();
   acc.characters.forEach(id => {
-    charList.push(charHandler.getCharByID(id));
+    var char = charHandler.getCharByID(id);
+    if (char) {
+      charList.push(charHandler.getCharByID(id));
+    }
   });
 
-  response.render('charselect.ejs', {charList, accName});
+  response.render('charselect.ejs', {charList, monTiles, accName});
 });
 
 // Character selection processing
@@ -141,7 +145,12 @@ app.get('/charselect_act', authSession, function(request, response) {
 
 // Character creation
 app.get('/createchar', authSession, function(request, response) {
-  response.render('charcreation.ejs');
+  var charCreationList = charHandler.charCreationList;
+  var charCreationPathDict: any = {};
+  charCreationList.forEach(function(charTile) {
+    charCreationPathDict[charTile] = monTiles[charTile];
+  });
+  response.render('charcreation.ejs', {charCreationList, charCreationPathDict});
 });
 
 // Character creation processing

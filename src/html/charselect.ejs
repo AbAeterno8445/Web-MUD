@@ -6,10 +6,16 @@
         text-align:center;
         padding:8px;
       }
-      .charCanvas {
+      .charImg {
+        display: inline-block;
         width:48px;
         height:48px;
         border:1px solid #ccc;
+      }
+      img {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
       }
     </style>
   </head>
@@ -24,7 +30,9 @@
       </div>
       <% charList.forEach(function(char, i) { %>
         <div style="width:auto; border:1px solid #ccc;">
-          <canvas class="charCanvas" id="chCanvas<%=i%>"></canvas><br>
+          <div class="charImg">
+            <img src="assets/sprites/<%= monTiles[char.tileID] %>"><br>
+          </div>
           <p><%= char.name %></p>
           <a href="/charselect_act?id=<%= char.id %>">Select</a>
         </div>
@@ -34,23 +42,4 @@
       </form>
     </div>
   </body>
-
-  <script>
-    var charImg = new Image();
-    charImg.onload = drawChars;
-    charImg.src = "https://opengameart.org/sites/default/files/DungeonCrawl_ProjectUtumnoTileset.png";
-
-    var tmp_canvas;
-    var context;
-    function drawChars() {
-      <% charList.forEach(function(char, i) { %>
-        tmp_canvas = document.getElementById("chCanvas<%=i%>");
-        tmp_canvas.width = 48;
-        tmp_canvas.height = 48;
-        context = tmp_canvas.getContext('2d');
-        context.clearRect(0, 0, 48, 48);
-        context.drawImage(charImg, (<%= char.tileID %> % 64) * 32, Math.floor(<%= char.tileID %> / 64) * 32, 32, 32, 8, 8, 32, 32);
-      <% }) %>
-    }
-  </script>
 </html>
