@@ -15,7 +15,7 @@ export class CharacterHandler {
         this._characterList = new Array();
 
         // Initially available character sprites for creation
-        this._charCreationList = ["BOGGART", "DWARF", "GOBLIN", "MUMMY_PRIEST"];
+        this._charCreationList = ["HUMANOIDS_BOGGART", "HUMANOIDS_DWARF", "HUMANOIDS_GOBLIN", "UNDEAD_MUMMY_PRIEST"];
 
         this._listPath = path.join(__dirname, 'jsondata/characters.json');
         this.loadCharFile();
