@@ -13,13 +13,6 @@ export class EntityManager {
     constructor(canvas: HTMLCanvasElement, canvasW: number, canvasH: number) {
         // Init canvas
         this.setCanvas(canvas, canvasW, canvasH);
-
-        // Load entity images
-        for (var img in monTiles) {
-            var entImg = new Image();
-            entImg.src = "assets/sprites/" + monTiles[img];
-            this._entImages[img] = entImg;
-        }
     }
 
     // GET main player
@@ -44,17 +37,30 @@ export class EntityManager {
     /** Creates an entity using a dictionary with relevant data     
      *  Dictionary based on server entity's getClientDict() function */
     public newEntity(entDict: any): void {
-        var newEnt = new ClientEntity(entDict.posX, entDict.posY, entDict.tileID);
+        var entTile = entDict.tileID;
+        var newEnt = new ClientEntity(entDict.posX, entDict.posY, entTile);
         this._entityList[entDict.id] = newEnt;
+        this.loadEntityImage(newEnt);
         this.drawEntities();
+    }
+
+    /** Load an entity's image */
+    public loadEntityImage(ent: ClientEntity) {
+        var entImg = ent.tileID;
+        if (entImg in this._entImages == false) {
+            this._entImages[entImg] = new Image();
+            this._entImages[entImg].src = "assets/sprites/" + monTiles[entImg];
+        }
     }
 
     /** Sets an entity's data from a given dictionary */
     public setEntityData(id: any, entDict: any) {
         if (id === -1) {
             this._mainPlayer.setData(entDict);
+            this.loadEntityImage(this._mainPlayer);
         } else if (this._entityList[id]) {
             this._entityList[id].setData(entDict);
+            this.loadEntityImage(this._entityList[id]);
         }
         this.drawEntities();
     }
@@ -71,8 +77,10 @@ export class EntityManager {
     public setEntityTile(id: number, tile: string): void {
         if (id === -1) {
             this._mainPlayer.tileID = tile;
+            this.loadEntityImage(this._mainPlayer);
         } else if (this._entityList[id]) {
             this._entityList[id].tileID = tile;
+            this.loadEntityImage(this._entityList[id]);
         }
         this.drawEntities();
     }
@@ -103,7 +111,6 @@ export class EntityManager {
 
         // Draw player (always centered)
         if (this._mainPlayer) {
-            console.log(this._mainPlayer.tileID);
             this.drawEntity(this._mainPlayer.tileID, this._canvas.width / 2 - 16, this._canvas.height / 2 - 16);
         }
     }

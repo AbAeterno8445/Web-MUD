@@ -1,5 +1,4 @@
 import { MapManager } from './mapManager';
-import { ClientEntity } from './clientEntity';
 import { EntityManager } from './entityManager';
 
 var socket = io();
@@ -86,6 +85,7 @@ var entityManager: EntityManager = new EntityManager(entityCanvas, 800, 600);
 // Receive map data from server
 socket.on('mapdata', function(mapdata: any) {
   mapManager.mapTiles = mapdata.tiles;
+  mapManager.loadTiles(mapdata.tileData);
   mapManager.drawScene(entityManager.mainPlayer.posX, entityManager.mainPlayer.posY);
 });
 

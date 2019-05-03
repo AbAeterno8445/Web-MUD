@@ -116,14 +116,16 @@ app.get('/charselect', authSession, function(request, response) {
 
   // Create table of acc characters from char IDs and char handler
   var charList: any[] = new Array();
+  var charImgPathDict: any = {};
   acc.characters.forEach(id => {
     var char = charHandler.getCharByID(id);
     if (char) {
       charList.push(charHandler.getCharByID(id));
+      charImgPathDict[id] = monTiles[char.tileID];
     }
   });
 
-  response.render('charselect.ejs', {charList, monTiles, accName});
+  response.render('charselect.ejs', {charList, charImgPathDict, accName});
 });
 
 // Character selection processing

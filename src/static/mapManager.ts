@@ -13,13 +13,6 @@ export class MapManager {
     constructor(canvas: HTMLCanvasElement, canvasW: number, canvasH: number) {
         // Init canvas
         this.setCanvas(canvas, canvasW, canvasH);
-
-        // Load tile images
-        for (var img in dngnTiles) {
-            var entImg = new Image();
-            entImg.src = "assets/sprites/" + dngnTiles[img];
-            this._mapTileImages[img] = entImg;
-        }
     }
 
     // GET/SET map tiles
@@ -44,8 +37,23 @@ export class MapManager {
         this._canvasContext = canvas.getContext('2d');
     }
 
+    /** Loads a single tile's image */
+    public loadTile(tile: string) {
+        if (tile in this._mapTileImages == false) {
+            this._mapTileImages[tile] = new Image();
+            this._mapTileImages[tile].src = "assets/sprites/" + dngnTiles[tile];
+        }
+    }
+
+    /** Loads multiple tiles, receives a dictionary formatted as a map file's 'tileData' object */
+    public loadTiles(tileList: any) {
+        for (var tile in tileList) {
+            this.loadTile(tileList[tile]);
+        }
+    }
+
     /** Draw a tile into the canvas */
-    private drawTile(tileID: string, x: number, y: number) {
+    public drawTile(tileID: string, x: number, y: number) {
         var tileImg = this._mapTileImages[tileID];
         if (tileImg) {
             this._canvasContext.drawImage(tileImg, x, y);

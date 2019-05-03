@@ -85,7 +85,8 @@ export class Map {
      * Client side map should be constructed based on this data */
     public getClientDict(): any {
         var clientDict = {
-            tiles: this._mapTiles
+            tiles: this._mapTiles,
+            tileData: this._mapTileData
         }
         return clientDict;
     }
