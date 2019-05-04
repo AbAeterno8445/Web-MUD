@@ -65,15 +65,20 @@ export class MapManager {
     }
 
     /** Loads a single tile's image */
-    public loadTile(tile: string) {
+    public loadTile(tile: string): void {
         if (tile in this._mapTileImages == false) {
-            this._mapTileImages[tile] = new Image();
-            this._mapTileImages[tile].src = "assets/sprites/" + dngnTiles[tile];
+            var tileImg = new Image();
+            tileImg.setAttribute('loaded', '0');
+            tileImg.onload = function() {
+                tileImg.setAttribute('loaded', '1');
+            };
+            tileImg.src = "assets/sprites/" + dngnTiles[tile];
+            this._mapTileImages[tile] = tileImg;
         }
     }
 
     /** Loads multiple tiles, receives a dictionary formatted as a map file's 'tileData' object */
-    public loadTiles(tileList: any) {
+    public loadTiles(tileList: any): void {
         for (var tile in tileList) {
             this.loadTile(tileList[tile]);
         }
@@ -83,6 +88,13 @@ export class MapManager {
     public drawTile(tileID: string, x: number, y: number): void {
         var tileImg = this._mapTileImages[tileID];
         if (tileImg) {
+            // Postpone drawing if not loaded
+            if (tileImg.getAttribute('loaded') === '0') {
+                setTimeout(() => {
+                    this.drawTile(tileID, x, y);
+                }, 100);
+            }
+
             this._canvasContext.drawImage(tileImg, x, y);
         }
     }

@@ -2,14 +2,12 @@ import {ClientEntity} from './clientEntity';
 import {monTiles} from './../consts/monTiles';
 import { MapManager } from './mapManager';
 
-const defaultEntTile = monTiles.UNSEEN;
-
 export class EntityManager {
     private _entImages: any = {};
     private _canvas: HTMLCanvasElement;
     private _canvasContext: any;
     private _entityList: any = {};
-    private _mainPlayer: ClientEntity = new ClientEntity(0, 0, defaultEntTile);  // Main player
+    private _mainPlayer: ClientEntity = new ClientEntity();  // Main player
 
     constructor(canvas: HTMLCanvasElement, canvasW: number, canvasH: number) {
         // Init canvas
@@ -27,19 +25,11 @@ export class EntityManager {
         this._canvasContext = canvas.getContext('2d');
     }
 
-    /** Draws an entity at a given position */
-    public drawEntity(entID: string, x: number, y: number): void {
-        var entImg = this._entImages[entID];
-        if (entImg) {
-            this._canvasContext.drawImage(entImg, x, y);
-        }
-    }
-
     /** Creates an entity using a dictionary with relevant data     
      *  Dictionary based on server entity's getClientDict() function */
     public newEntity(entDict: any): void {
-        var entTile = entDict.tileID;
-        var newEnt = new ClientEntity(entDict.posX, entDict.posY, entTile);
+        var newEnt = new ClientEntity();
+        newEnt.setData(entDict);
         this._entityList[entDict.id] = newEnt;
         this.loadEntityImage(newEnt);
     }
@@ -48,8 +38,13 @@ export class EntityManager {
     public loadEntityImage(ent: ClientEntity) {
         var entImg = ent.tileID;
         if (entImg in this._entImages == false) {
-            this._entImages[entImg] = new Image();
-            this._entImages[entImg].src = "assets/sprites/" + monTiles[entImg];
+            var newEntImg = new Image();
+            newEntImg.setAttribute('loaded', '0');
+            newEntImg.onload = function() {
+                newEntImg.setAttribute('loaded', '1');
+            };
+            newEntImg.src = "assets/sprites/" + monTiles[entImg];
+            this._entImages[entImg] = newEntImg;
         }
     }
 
@@ -91,6 +86,42 @@ export class EntityManager {
         }
     }
 
+    /** Draws an entity at a given position */
+    public drawEntity(ent: ClientEntity, x: number, y: number): void {
+        var entImg = this._entImages[ent.tileID];
+        if (entImg) {
+            // Postpone drawing if not loaded
+            if (entImg.getAttribute('loaded') === '0') {
+                setTimeout(() => {
+                    this.drawEntity(ent, x, y);
+                }, 100);
+                return;
+            }
+            
+            this._canvasContext.drawImage(entImg, x, y - (entImg.height - 32));
+            if (ent.hp >= 0 && ent.hp < ent.maxhp) {
+                var perc = ent.hp / ent.maxhp;
+                var red = 0;
+                var green = 255;
+                if (perc < 0.67) {
+                    if (perc > 0.33) {
+                        red = 255;
+                    } else {
+                        red = 255;
+                        green = 0;
+                    }
+                }
+
+                this._canvasContext.lineWidth = 2;
+                this._canvasContext.strokeStyle = "rgb(" + red.toString() + "," + green.toString() + ",0)";
+                this._canvasContext.beginPath();
+                this._canvasContext.moveTo(x, y + 32);
+                this._canvasContext.lineTo(x + Math.max(1, Math.floor(entImg.width * perc)), y + 32);
+                this._canvasContext.stroke();
+            }
+        }
+    }
+
     /** Draw the entities into the canvas */
     public drawEntities(mapManager: MapManager) {
         // Clear canvas
@@ -103,14 +134,14 @@ export class EntityManager {
             if (ent) {
                 var entTile = mapManager.getTileAt(ent.posX, ent.posY);
                 if (entTile.visible) {
-                    this.drawEntity(ent.tileID, drawOffsetX + ent.posX * 32, drawOffsetY + ent.posY * 32);
+                    this.drawEntity(ent, drawOffsetX + ent.posX * 32, drawOffsetY + ent.posY * 32);
                 }
             }
         };
 
         // Draw player (always centered)
         if (this._mainPlayer) {
-            this.drawEntity(this._mainPlayer.tileID, this._canvas.width / 2 - 16, this._canvas.height / 2 - 16);
+            this.drawEntity(this._mainPlayer, this._canvas.width / 2 - 16, this._canvas.height / 2 - 16);
         }
     }
 }

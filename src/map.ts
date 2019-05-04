@@ -1,9 +1,9 @@
 import {Tile} from "./tile";
-import {dngnTiles} from "./consts/dngnTiles";
 import { Entity } from "./entity";
+import { monTiles } from "./consts/monTiles";
 
 const mapTileLimit = 64;
-const defaultTile = dngnTiles.UNSEEN;
+const defaultTile = "UNSEEN";
 const fs = require('fs');
 const path = require('path');
 
@@ -14,6 +14,7 @@ export class Map {
     private _width: number;
     private _height: number;
     private _entityList: any = {};
+    private _entityIDcounter: number = 0;
 
     constructor() {
         this._name = "Unknown";
@@ -26,6 +27,12 @@ export class Map {
             for (let j = 0; j < this._height; j++) {
                 this._mapTiles[i].push(new Tile(j, i, defaultTile));
             }
+        }
+
+        for (var i = 0; i < 5; i++) {
+            var keys = Object.keys(monTiles);
+            var entSpr = keys[keys.length * Math.random() << 0];
+            this.loadEntity(new Entity("monstro", 2, 6+i, entSpr));
         }
     }
 
@@ -47,6 +54,15 @@ export class Map {
         if (h > 1 && h < mapTileLimit) {
             this._height = h;
         }
+    }
+
+    // GET entity list
+    get entityList(): any { return this._entityList; }
+
+    /** Generate an entity ID for this map */
+    public genEntityID(): number {
+        this._entityIDcounter++;
+        return this._entityIDcounter;
     }
 
     /** Loads the map json file, relative from maps directory */
@@ -144,9 +160,11 @@ export class Map {
 
     /** Load a previously created entity into the map */
     public loadEntity(ent: Entity): void {
-        if (ent.id in this._entityList == false) {
-            this._entityList[ent.id] = ent;
+        if (ent.id && ent.id in this._entityList && this._entityList[ent.id] == ent) {
+            return;
         }
+        ent.id = this.genEntityID();
+        this._entityList[ent.id] = ent;
     }
 
     /** Find and return an entity from the map given its id, returns undefined if not found */
@@ -172,6 +190,47 @@ export class Map {
     public removeEntity(id: number): void {
         if (id in this._entityList) {
             delete this._entityList[id];
+        }
+    }
+
+    /** Makes an entity attempt to attack given position    
+     *  Returns 0 if no target entity, 1 if attack on cooldown, 2 if successful */
+    public entityAttackPos(ent: Entity, x: number, y: number): number {
+        if (ent.id in this._entityList) {
+            var targetEnt = this.findEntityAt(x, y);
+            if (targetEnt) {
+                if (ent.canAttack()) {
+                    ent.resetAttackCD();
+                    targetEnt.hp -= ent.dmgPhys;
+                    if (targetEnt.hp <= 0) {
+                        this.removeEntity(targetEnt.id);
+                    }
+                    return 2;
+                }
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    /** Makes an entity attack another one */
+    public entityAttackEnt(ent: Entity, target: Entity): void {
+        if (ent.id in this._entityList && target.id in this._entityList) {
+            if (ent.canAttack()) {
+                ent.resetAttackCD();
+                target.hp -= ent.dmgPhys;
+                if (target.hp <= 0) {
+                    this.removeEntity(target.id);
+                }
+            }
+        }
+    }
+
+    /** Process tick for this map */
+    public update(): void {
+        for (var e in this._entityList) {
+            var ent = this._entityList[e];
+            ent.update();
         }
     }
 }

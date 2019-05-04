@@ -4,7 +4,7 @@ import {CharacterHandler} from './character-handler';
 import {SessionHandler} from './session-handler';
 import {Map} from './map';
 import {monTiles} from './consts/monTiles';
-import { MapInstance } from './mapInstance';
+import {MapInstance} from './mapInstance';
 
 const http = require('http');
 const socketIO = require('socket.io');
@@ -166,7 +166,7 @@ app.post('/createchar_act', authSession, function(request, response) {
   console.log("Result: " + result);
   if (result == 2) {
     var accName = sessionHandler.getSessionAccName(request.sessionID);
-    accHandler.associateChar(charHandler.getCharByName(char_name).id, accName);
+    accHandler.associateChar(charHandler.getCharByName(char_name).charID, accName);
     response.redirect('/charselect');
   } else {
     response.redirect('/createchar');
@@ -192,10 +192,21 @@ server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
 
-const players: any = {};
 const testMap: Map = new Map();
 testMap.loadFromFile("huge.json");
 const mainInstance: MapInstance = new MapInstance(testMap, io);
+
+// Dictionary for directional actions
+const dirDict: any = {
+  n: [0, -1],
+  ne: [1, -1],
+  e: [1, 0],
+  se: [1, 1],
+  s: [0, 1],
+  sw: [-1, 1],
+  w: [-1, 0],
+  nw: [-1, -1]
+}
 
 io.on('connection', function(socket: any) {
   var playerSession = sessionHandler.findSessionByID(socket.handshake.sessionID);
@@ -206,64 +217,34 @@ io.on('connection', function(socket: any) {
   socket.on('newpl', function() {
     playerAcc.inGame = true;  // Remove this to enable double-logging
     playerChar.moveTo(2, 2);
-    mainInstance.addClient(playerChar, socket.id);
-    players[socket.id] = playerChar;
-
-    // Send map data to player
-    mainInstance.emitTo(socket.id, 'mapdata', testMap.getClientDict());
-    // Set player data
-    mainInstance.emitTo(socket.id, 'setentitydata', {id: -1, entData: playerChar.getClientDict()});
-    // New player creation for others
-    mainInstance.emitOthers(socket.id, 'newentity', playerChar.getClientDict());
-    // Other player creation for new player
-    for (var pl in players) {
-      if (pl === socket.id) continue;
-      var player = players[pl];
-      mainInstance.emitTo(socket.id, 'newentity', player.getClientDict());
-    }
+    mainInstance.addClient(socket.id, playerChar);
   });
 
   // Player movement
   socket.on('movement', function(data: any) {
-    var plX = playerChar.posX;
-    var plY = playerChar.posY;
-    if (data.n) { // North
-      if (testMap.tileCollFree(plX, plY-1)) playerChar.moveDir(0, -1);
-    } else if (data.ne) { // Northeast
-      if (testMap.tileCollFree(plX+1, plY-1)) playerChar.moveDir(1, -1);
-    } else if (data.e) { // East
-      if (testMap.tileCollFree(plX+1, plY)) playerChar.moveDir(1, 0);
-    } else if (data.se) { // Southeast
-      if (testMap.tileCollFree(plX+1, plY+1)) playerChar.moveDir(1, 1);
-    } else if (data.s) { // South
-      if (testMap.tileCollFree(plX, plY+1)) playerChar.moveDir(0, 1);
-    } else if (data.sw) { // Southwest
-      if (testMap.tileCollFree(plX-1, plY+1)) playerChar.moveDir(-1, 1);
-    } else if (data.w) { // West
-      if (testMap.tileCollFree(plX-1, plY)) playerChar.moveDir(-1, 0);
-    } else if (data.nw) { // Northwest
-      if (testMap.tileCollFree(plX-1, plY-1)) playerChar.moveDir(-1, -1);
+    if (data.dir in dirDict) {
+      var dirList = dirDict[data.dir];
+      mainInstance.clientCharMove(socket.id, dirList[0], dirList[1]);
     }
-    mainInstance.emitTo(socket.id, 'mventity', {id: -1, x: playerChar.posX, y: playerChar.posY});
-    mainInstance.emitOthers(socket.id, 'mventity', {id: playerChar.id, x: playerChar.posX, y: playerChar.posY});
+  });
+
+  // Player attack
+  socket.on('attack', function(data: any) {
+    if (data.dir in dirDict) {
+      var dirList = dirDict[data.dir];
+      mainInstance.clientCharAttack(socket.id, dirList[0], dirList[1]);
+    }
   });
 
   // Player disconnects
   socket.on('disconnect', function() {
-    mainInstance.emitOthers(socket.id, 'playerDisconnect', {id: playerChar.id});
-    mainInstance.removeClient(playerChar.id);
-    delete players[socket.id];
+    mainInstance.removeClient(socket.id);
     playerAcc.inGame = false;
   });
 });
 
 // Process tick
 setInterval(function() {
-  // Update player characters
-  for (var pl in players) {
-    var char = charHandler.getCharByID(players[pl].id);
-    if (char) {
-      char.update();
-    }
-  }
+  // Update maps
+  mainInstance.update();
 }, 1000 / 60);

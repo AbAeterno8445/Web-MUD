@@ -1,18 +1,12 @@
 /** Client-side entity class used for drawing   
  * Should be structured based on server-side entities' "getClientDict" function */
 export class ClientEntity {
-    private _posX: number;
-    private _posY: number;
-    private _tileID: string;
-    private _hp: number;
-    private _maxhp: number;
-    private _sightRange: number;
-
-    constructor(drawX: number, drawY: number, tileID: string) {
-        this._posX = drawX;
-        this._posY = drawY;
-        this._tileID = tileID;
-    }
+    private _posX: number = 0;
+    private _posY: number = 0;
+    private _tileID: string = "UNSEEN_MONSTER";
+    private _hp: number = 0;
+    private _maxhp: number = 0;
+    private _sightRange: number = 0;
 
     // GET/SET positions
     get posX(): number { return this._posX; }

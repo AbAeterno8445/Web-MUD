@@ -3,7 +3,8 @@ import { EntityManager } from './entityManager';
 
 var socket = io();
 
-var movement = {
+var attack: boolean = false;
+var movement: any = {
     n: false,
     ne: false,
     e: false,
@@ -40,6 +41,9 @@ document.addEventListener('keydown', function(event) {
       case 103: // num 7 - northwest
       movement.nw = true;
       break;
+      case 17: // ctrl - attack
+      attack = true;
+      break;
     }
 });
 document.addEventListener('keyup', function(event) {
@@ -68,13 +72,25 @@ switch (event.keyCode) {
   case 103: // num 7 - northwest
   movement.nw = false;
   break;
+  case 17: // ctrl - attack
+  attack = false;
+  break;
 }
 });
 
 socket.emit('newpl');
 
 setInterval(function() {
-  socket.emit('movement', movement);
+  for (var d in movement) {
+    if (movement[d]) {
+      if (attack) {
+        socket.emit('attack', {dir: d});
+      } else {
+        socket.emit('movement', {dir: d});
+      }
+      break;
+    }
+  }
 }, 1000 / 60);
 
 const mapCanvas = <HTMLCanvasElement> document.getElementById('cv_maplayer');
@@ -104,6 +120,9 @@ socket.on('newentity', function(data: any) {
 // Set an entity's data
 socket.on('setentitydata', function(data: any) {
   entityManager.setEntityData(data.id, data.entData);
+  if (data.id === -1) {
+    mapManager.drawScene(entityManager.mainPlayer);
+  }
   entityManager.drawEntities(mapManager);
 });
 
@@ -116,8 +135,8 @@ socket.on('mventity', function(data: any) {
   }
 });
 
-// Player disconnection - remove its entity
-socket.on('playerDisconnect', function(data: any) {
+// Removes an entity
+socket.on('delentity', function(data: any) {
   entityManager.removeEntity(data.id);
   entityManager.drawEntities(mapManager);
 });

@@ -1,15 +1,14 @@
 {
     "characters": [
         {
-            "_posX": 1,
-            "_posY": 6,
+            "_posX": 0,
+            "_posY": 0,
             "_tileID": "HUMANOIDS_BOGGART",
             "_flags": [],
             "_cooldownList": {
                 "mvSpeed": 0,
                 "attSpeed": 0
             },
-            "_id": 1,
             "_name": "lord cebolla",
             "_level": 1,
             "_mvSpeed": 0.4,
@@ -17,18 +16,18 @@
             "_maxhp": 20,
             "_dmgPhys": 1,
             "_sightRange": 7,
-            "_hp": 20
+            "_hp": 20,
+            "_charID": 1
         },
         {
-            "_posX": 3,
-            "_posY": 8,
+            "_posX": 0,
+            "_posY": 0,
             "_tileID": "UNDEAD_MUMMY_PRIEST",
             "_flags": [],
             "_cooldownList": {
                 "mvSpeed": 0,
                 "attSpeed": 0
             },
-            "_id": 2,
             "_name": "lord lechuga",
             "_level": 1,
             "_mvSpeed": 0.4,
@@ -36,7 +35,8 @@
             "_maxhp": 20,
             "_dmgPhys": 1,
             "_sightRange": 7,
-            "_hp": 20
+            "_hp": 20,
+            "_charID": 2
         },
         {
             "_posX": 0,
@@ -47,7 +47,6 @@
                 "mvSpeed": 0,
                 "attSpeed": 0
             },
-            "_id": 3,
             "_name": "dorfe",
             "_level": 1,
             "_mvSpeed": 0.4,
@@ -55,7 +54,8 @@
             "_maxhp": 20,
             "_dmgPhys": 1,
             "_sightRange": 7,
-            "_hp": 20
+            "_hp": 20,
+            "_charID": 3
         },
         {
             "_posX": 0,
@@ -66,7 +66,6 @@
                 "mvSpeed": 0,
                 "attSpeed": 0
             },
-            "_id": 4,
             "_name": "ELGOBLINO",
             "_level": 1,
             "_mvSpeed": 0.4,
@@ -74,7 +73,8 @@
             "_maxhp": 20,
             "_dmgPhys": 1,
             "_sightRange": 7,
-            "_hp": 20
+            "_hp": 20,
+            "_charID": 4
         },
         {
             "_posX": 0,
@@ -85,7 +85,6 @@
                 "mvSpeed": 0,
                 "attSpeed": 0
             },
-            "_id": 5,
             "_name": "bogo",
             "_level": 1,
             "_mvSpeed": 0.4,
@@ -93,18 +92,18 @@
             "_maxhp": 20,
             "_dmgPhys": 1,
             "_sightRange": 7,
-            "_hp": 20
+            "_hp": 20,
+            "_charID": 5
         },
         {
-            "_posX": 1,
-            "_posY": 8,
+            "_posX": 0,
+            "_posY": 0,
             "_tileID": "HUMANOIDS_GOBLIN",
             "_flags": [],
             "_cooldownList": {
                 "mvSpeed": 0,
                 "attSpeed": 0
             },
-            "_id": 6,
             "_name": "gublinium",
             "_level": 1,
             "_mvSpeed": 0.4,
@@ -112,7 +111,8 @@
             "_maxhp": 20,
             "_dmgPhys": 1,
             "_sightRange": 7,
-            "_hp": 20
+            "_hp": 20,
+            "_charID": 6
         },
         {
             "_posX": 0,
@@ -123,7 +123,6 @@
                 "mvSpeed": 0,
                 "attSpeed": 0
             },
-            "_id": 7,
             "_name": "telbogo",
             "_level": 1,
             "_mvSpeed": 0.4,
@@ -131,7 +130,46 @@
             "_maxhp": 20,
             "_dmgPhys": 1,
             "_sightRange": 7,
-            "_hp": 20
+            "_hp": 20,
+            "_charID": 7
+        },
+        {
+            "_posX": 0,
+            "_posY": 0,
+            "_tileID": "UNIQUE_CEREBOV",
+            "_flags": [],
+            "_cooldownList": {
+                "mvSpeed": 0,
+                "attSpeed": 0
+            },
+            "_name": "Cerebov",
+            "_level": 1,
+            "_mvSpeed": 0.4,
+            "_attSpeed": 0.6,
+            "_maxhp": 20,
+            "_dmgPhys": 1,
+            "_sightRange": 7,
+            "_hp": 20,
+            "_charID": 8
+        },
+        {
+            "_posX": 0,
+            "_posY": 0,
+            "_tileID": "UNIQUE_LOM_LOBON",
+            "_flags": [],
+            "_cooldownList": {
+                "mvSpeed": 0,
+                "attSpeed": 0
+            },
+            "_name": "LomLobon",
+            "_level": 1,
+            "_mvSpeed": 0.4,
+            "_attSpeed": 0.6,
+            "_maxhp": 20,
+            "_dmgPhys": 1,
+            "_sightRange": 7,
+            "_hp": 20,
+            "_charID": 9
         }
     ]
 }

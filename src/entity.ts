@@ -18,9 +18,8 @@ export class Entity extends Tile {
     private _dmgPhys: number;
     private _sightRange: number;
 
-    constructor(id: number, name: string, x: number, y: number, sprite: string) {
+    constructor(name: string, x: number, y: number, sprite: string) {
         super(x, y, sprite);
-        this._id = id;
         this._name = name;
         this._level = 1;
         this._mvSpeed = 0.4;
@@ -32,8 +31,9 @@ export class Entity extends Tile {
         this.hp = this.maxhp;
     }
 
-    // GET id
+    // GET/SET id
     get id(): number { return this._id; }
+    set id(id: number) { this._id = id; }
 
     // GET/SET name
     get name(): string { return this._name; }

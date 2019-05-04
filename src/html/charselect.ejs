@@ -31,10 +31,10 @@
       <% charList.forEach(function(char, i) { %>
         <div style="width:auto; border:1px solid #ccc;">
           <div class="charImg">
-            <img src="assets/sprites/<%= charImgPathDict[char.id] %>"><br>
+            <img src="assets/sprites/<%= charImgPathDict[char.charID] %>"><br>
           </div>
           <p><%= char.name %></p>
-          <a href="/charselect_act?id=<%= char.id %>">Select</a>
+          <a href="/charselect_act?id=<%= char.charID %>">Select</a>
         </div>
       <% }) %>
       <form action="/createchar">

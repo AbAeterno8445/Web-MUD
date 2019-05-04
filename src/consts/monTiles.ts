@@ -1,5 +1,6 @@
 interface ImonTiles {
 	[key: string]: string
+	UNSEEN_MONSTER: string;
 	ABERRATIONS_ABOMINATION_LARGE: string;
 	ABERRATIONS_ABOMINATION_LARGE1: string;
 	ABERRATIONS_ABOMINATION_LARGE2: string;
@@ -921,6 +922,7 @@ interface ImonTiles {
 }
 
 export const monTiles: ImonTiles = {
+	UNSEEN_MONSTER: "misc/unseen_monster.png",
 	ABERRATIONS_ABOMINATION_LARGE: "mon/aberrations/abomination_large.png",
 	ABERRATIONS_ABOMINATION_LARGE1: "mon/aberrations/abomination_large1.png",
 	ABERRATIONS_ABOMINATION_LARGE2: "mon/aberrations/abomination_large2.png",
