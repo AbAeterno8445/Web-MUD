@@ -6,6 +6,7 @@ export class ClientEntity {
     private _tileID: string;
     private _hp: number;
     private _maxhp: number;
+    private _sightRange: number;
 
     constructor(drawX: number, drawY: number, tileID: string) {
         this._posX = drawX;
@@ -35,6 +36,10 @@ export class ClientEntity {
     get maxhp(): number { return this._maxhp; }
     set maxhp(h: number) { this._maxhp = h; }
 
+    // GET/SET sight range
+    get sightRange(): number { return this._sightRange; }
+    set sightRange(sr: number) { this._sightRange = sr; }
+
     /** Sets the entity's data from a given dictionary  
      *  Dictionary format is based on server entity's getClientDict() function */
     public setData(dataDict: any) {
@@ -43,6 +48,7 @@ export class ClientEntity {
         this._tileID = dataDict.tileID;
         this._hp = dataDict.hp;
         this._maxhp = dataDict.maxhp;
+        this._sightRange = dataDict.sightRange;
     }
 
     /** Moves the entity to the given position */

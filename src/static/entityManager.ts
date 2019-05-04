@@ -1,5 +1,6 @@
 import {ClientEntity} from './clientEntity';
 import {monTiles} from './../consts/monTiles';
+import { MapManager } from './mapManager';
 
 const defaultEntTile = monTiles.UNSEEN;
 
@@ -41,7 +42,6 @@ export class EntityManager {
         var newEnt = new ClientEntity(entDict.posX, entDict.posY, entTile);
         this._entityList[entDict.id] = newEnt;
         this.loadEntityImage(newEnt);
-        this.drawEntities();
     }
 
     /** Load an entity's image */
@@ -62,7 +62,6 @@ export class EntityManager {
             this._entityList[id].setData(entDict);
             this.loadEntityImage(this._entityList[id]);
         }
-        this.drawEntities();
     }
 
     /** Removes an existing entity */
@@ -70,7 +69,6 @@ export class EntityManager {
         if (this._entityList[id]) {
             delete this._entityList[id];
         }
-        this.drawEntities();
     }
 
     /** Change an entity's tile, use id -1 for main player */
@@ -82,7 +80,6 @@ export class EntityManager {
             this._entityList[id].tileID = tile;
             this.loadEntityImage(this._entityList[id]);
         }
-        this.drawEntities();
     }
 
     /** Moves an entity to the given position */
@@ -92,11 +89,10 @@ export class EntityManager {
         } else if (this._entityList[id]) {
             this._entityList[id].moveTo(x, y);
         }
-        this.drawEntities();
     }
 
     /** Draw the entities into the canvas */
-    public drawEntities() {
+    public drawEntities(mapManager: MapManager) {
         // Clear canvas
         this._canvasContext.clearRect(0, 0, 800, 600);
 
@@ -105,7 +101,10 @@ export class EntityManager {
         for (var e in this._entityList) {
             var ent: ClientEntity = this._entityList[e];
             if (ent) {
-                this.drawEntity(ent.tileID, drawOffsetX + ent.posX * 32, drawOffsetY + ent.posY * 32);
+                var entTile = mapManager.getTileAt(ent.posX, ent.posY);
+                if (entTile.visible) {
+                    this.drawEntity(ent.tileID, drawOffsetX + ent.posX * 32, drawOffsetY + ent.posY * 32);
+                }
             }
         };
 

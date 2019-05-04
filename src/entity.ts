@@ -16,6 +16,7 @@ export class Entity extends Tile {
     private _mvSpeed: number;
     private _attSpeed: number;
     private _dmgPhys: number;
+    private _sightRange: number;
 
     constructor(id: number, name: string, x: number, y: number, sprite: string) {
         super(x, y, sprite);
@@ -26,6 +27,7 @@ export class Entity extends Tile {
         this._attSpeed = 0.6;
         this._maxhp = 20;
         this._dmgPhys = 1;
+        this._sightRange = 7;
         
         this.hp = this.maxhp;
     }
@@ -54,6 +56,10 @@ export class Entity extends Tile {
     // GET level
     get level(): number { return this._level; }
 
+    // GET/SET sight range
+    get sightRange(): number { return this._sightRange; }
+    set sightRange(sr: number) { this._sightRange = sr; }
+
     // GET/SET movement speed
     get mvSpeed(): number { return this._mvSpeed; }
     set mvSpeed(s: number) { this._mvSpeed = s; }
@@ -74,7 +80,8 @@ export class Entity extends Tile {
             posY: this.posY,
             tileID: this.tileID,
             hp: this.hp,
-            maxhp: this.maxhp
+            maxhp: this.maxhp,
+            sightRange: this.sightRange
         }
         return dataDict;
     }

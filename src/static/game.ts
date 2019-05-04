@@ -86,33 +86,38 @@ var entityManager: EntityManager = new EntityManager(entityCanvas, 800, 600);
 socket.on('mapdata', function(mapdata: any) {
   mapManager.mapTiles = mapdata.tiles;
   mapManager.loadTiles(mapdata.tileData);
-  mapManager.drawScene(entityManager.mainPlayer.posX, entityManager.mainPlayer.posY);
+  mapManager.drawScene(entityManager.mainPlayer);
 });
 
 // Change entity tile
 socket.on('setentitytile', function(data: any) {
   entityManager.setEntityTile(data.id, data.tile);
+  entityManager.drawEntities(mapManager);
 });
 
 // Creates an entity
 socket.on('newentity', function(data: any) {
   entityManager.newEntity(data);
+  entityManager.drawEntities(mapManager);
 });
 
 // Set an entity's data
 socket.on('setentitydata', function(data: any) {
   entityManager.setEntityData(data.id, data.entData);
+  entityManager.drawEntities(mapManager);
 });
 
 // Moves an entity, id -1 is current player
 socket.on('mventity', function(data: any) {
   entityManager.moveEntity(data.id, data.x, data.y);
   if (data.id === -1) {
-    mapManager.drawScene(entityManager.mainPlayer.posX, entityManager.mainPlayer.posY);
+    mapManager.drawScene(entityManager.mainPlayer);
+    entityManager.drawEntities(mapManager);
   }
 });
 
 // Player disconnection - remove its entity
 socket.on('playerDisconnect', function(data: any) {
   entityManager.removeEntity(data.id);
+  entityManager.drawEntities(mapManager);
 });

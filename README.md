@@ -8,3 +8,4 @@ http://rltiles.sf.net
 
 # Tile flags
 w - wall, blocks movement
+ns - no sight, blocks sight
