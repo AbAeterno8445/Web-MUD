@@ -1,8 +1,8 @@
 {
     "characters": [
         {
-            "_posX": 0,
-            "_posY": 0,
+            "_posX": 1,
+            "_posY": 6,
             "_tileID": "HUMANOIDS_BOGGART",
             "_flags": [],
             "_cooldownList": {
@@ -16,11 +16,12 @@
             "_attSpeed": 0.6,
             "_maxhp": 20,
             "_dmgPhys": 1,
+            "_sightRange": 7,
             "_hp": 20
         },
         {
-            "_posX": 0,
-            "_posY": 0,
+            "_posX": 3,
+            "_posY": 8,
             "_tileID": "UNDEAD_MUMMY_PRIEST",
             "_flags": [],
             "_cooldownList": {
@@ -34,6 +35,7 @@
             "_attSpeed": 0.6,
             "_maxhp": 20,
             "_dmgPhys": 1,
+            "_sightRange": 7,
             "_hp": 20
         },
         {
@@ -52,6 +54,7 @@
             "_attSpeed": 0.6,
             "_maxhp": 20,
             "_dmgPhys": 1,
+            "_sightRange": 7,
             "_hp": 20
         },
         {
@@ -70,6 +73,7 @@
             "_attSpeed": 0.6,
             "_maxhp": 20,
             "_dmgPhys": 1,
+            "_sightRange": 7,
             "_hp": 20
         },
         {
@@ -88,6 +92,45 @@
             "_attSpeed": 0.6,
             "_maxhp": 20,
             "_dmgPhys": 1,
+            "_sightRange": 7,
+            "_hp": 20
+        },
+        {
+            "_posX": 1,
+            "_posY": 8,
+            "_tileID": "HUMANOIDS_GOBLIN",
+            "_flags": [],
+            "_cooldownList": {
+                "mvSpeed": 0,
+                "attSpeed": 0
+            },
+            "_id": 6,
+            "_name": "gublinium",
+            "_level": 1,
+            "_mvSpeed": 0.4,
+            "_attSpeed": 0.6,
+            "_maxhp": 20,
+            "_dmgPhys": 1,
+            "_sightRange": 7,
+            "_hp": 20
+        },
+        {
+            "_posX": 0,
+            "_posY": 0,
+            "_tileID": "HUMANOIDS_BOGGART",
+            "_flags": [],
+            "_cooldownList": {
+                "mvSpeed": 0,
+                "attSpeed": 0
+            },
+            "_id": 7,
+            "_name": "telbogo",
+            "_level": 1,
+            "_mvSpeed": 0.4,
+            "_attSpeed": 0.6,
+            "_maxhp": 20,
+            "_dmgPhys": 1,
+            "_sightRange": 7,
             "_hp": 20
         }
     ]

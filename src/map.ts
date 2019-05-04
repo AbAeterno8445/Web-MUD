@@ -1,5 +1,6 @@
 import {Tile} from "./tile";
 import {dngnTiles} from "./consts/dngnTiles";
+import { Entity } from "./entity";
 
 const mapTileLimit = 64;
 const defaultTile = dngnTiles.UNSEEN;
@@ -12,6 +13,7 @@ export class Map {
     private _name: string;
     private _width: number;
     private _height: number;
+    private _entityList: any = {};
 
     constructor() {
         this._name = "Unknown";
@@ -133,10 +135,43 @@ export class Map {
     public tileCollFree(x: number, y: number): boolean {
         var tile = this._mapTiles[y][x];
         if (tile) {
-            if (!tile.hasFlag("w")) {
+            if (!tile.hasFlag("w") && !this.findEntityAt(x, y)) {
                 return true;
             }
         }
         return false;
+    }
+
+    /** Load a previously created entity into the map */
+    public loadEntity(ent: Entity): void {
+        if (ent.id in this._entityList == false) {
+            this._entityList[ent.id] = ent;
+        }
+    }
+
+    /** Find and return an entity from the map given its id, returns undefined if not found */
+    public findEntity(id: number): Entity {
+        if (id in this._entityList) {
+            return this._entityList[id];
+        }
+        return undefined;
+    }
+
+    /** Find and return an entity given its position, returns undefined if no entity is there */
+    public findEntityAt(x: number, y: number): Entity {
+        for (var e in this._entityList) {
+            var ent = this._entityList[e];
+            if (ent.posX === x && ent.posY === y) {
+                return ent;
+            }
+        }
+        return undefined;
+    }
+
+    /** Remove an entity from the map */
+    public removeEntity(id: number): void {
+        if (id in this._entityList) {
+            delete this._entityList[id];
+        }
     }
 }

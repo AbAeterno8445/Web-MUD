@@ -4,6 +4,7 @@ import {CharacterHandler} from './character-handler';
 import {SessionHandler} from './session-handler';
 import {Map} from './map';
 import {monTiles} from './consts/monTiles';
+import { MapInstance } from './mapInstance';
 
 const http = require('http');
 const socketIO = require('socket.io');
@@ -194,15 +195,7 @@ server.listen(5000, function() {
 const players: any = {};
 const testMap: Map = new Map();
 testMap.loadFromFile("huge.json");
-
-/** Sends data to other clients, ignoring the given socket */
-function sendOthers(socketID: any, channel: string, data: any): void {
-  for (var plSocket in players) {
-    if (plSocket === socketID) continue;
-
-    io.sockets.connected[plSocket].emit(channel, data);
-  }
-}
+const mainInstance: MapInstance = new MapInstance(testMap, io);
 
 io.on('connection', function(socket: any) {
   var playerSession = sessionHandler.findSessionByID(socket.handshake.sessionID);
@@ -213,19 +206,20 @@ io.on('connection', function(socket: any) {
   socket.on('newpl', function() {
     playerAcc.inGame = true;  // Remove this to enable double-logging
     playerChar.moveTo(2, 2);
+    mainInstance.addClient(playerChar, socket.id);
     players[socket.id] = playerChar;
 
     // Send map data to player
-    io.sockets.connected[socket.id].emit('mapdata', testMap.getClientDict());
+    mainInstance.emitTo(socket.id, 'mapdata', testMap.getClientDict());
     // Set player data
-    io.sockets.connected[socket.id].emit('setentitydata', {id: -1, entData: playerChar.getClientDict()});
+    mainInstance.emitTo(socket.id, 'setentitydata', {id: -1, entData: playerChar.getClientDict()});
     // New player creation for others
-    sendOthers(socket.id, 'newentity', playerChar.getClientDict());
+    mainInstance.emitOthers(socket.id, 'newentity', playerChar.getClientDict());
     // Other player creation for new player
     for (var pl in players) {
       if (pl === socket.id) continue;
       var player = players[pl];
-      io.sockets.connected[socket.id].emit('newentity', player.getClientDict());
+      mainInstance.emitTo(socket.id, 'newentity', player.getClientDict());
     }
   });
 
@@ -249,14 +243,15 @@ io.on('connection', function(socket: any) {
       if (testMap.tileCollFree(plX-1, plY)) playerChar.moveDir(-1, 0);
     } else if (data.nw) { // Northwest
       if (testMap.tileCollFree(plX-1, plY-1)) playerChar.moveDir(-1, -1);
-    } 
-    io.sockets.connected[socket.id].emit('mventity', {id: -1, x: playerChar.posX, y: playerChar.posY});
-    sendOthers(socket.id, 'mventity', {id: playerChar.id, x: playerChar.posX, y: playerChar.posY});
+    }
+    mainInstance.emitTo(socket.id, 'mventity', {id: -1, x: playerChar.posX, y: playerChar.posY});
+    mainInstance.emitOthers(socket.id, 'mventity', {id: playerChar.id, x: playerChar.posX, y: playerChar.posY});
   });
 
   // Player disconnects
   socket.on('disconnect', function() {
-    sendOthers(socket.id, 'playerDisconnect', {id: playerChar.id});
+    mainInstance.emitOthers(socket.id, 'playerDisconnect', {id: playerChar.id});
+    mainInstance.removeClient(playerChar.id);
     delete players[socket.id];
     playerAcc.inGame = false;
   });

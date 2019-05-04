@@ -1,7 +1,7 @@
 {
     "accounts": [
         {
-            "inGame": false,
+            "inGame": true,
             "name": "admin",
             "password": "admin",
             "characters": [
@@ -11,12 +11,28 @@
             ]
         },
         {
-            "inGame": false,
+            "inGame": true,
             "name": "test",
             "password": "test",
             "characters": [
                 2,
                 5
+            ]
+        },
+        {
+            "inGame": true,
+            "name": "otro",
+            "password": "otro",
+            "characters": [
+                6
+            ]
+        },
+        {
+            "inGame": false,
+            "name": "deltel",
+            "password": "deltel",
+            "characters": [
+                7
             ]
         }
     ]
