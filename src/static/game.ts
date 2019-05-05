@@ -1,5 +1,7 @@
 import { MapManager } from './mapManager';
 import { EntityManager } from './entityManager';
+import { ClientEntity } from './clientEntity';
+import { ChatManager } from './chatManager';
 
 var socket = io();
 
@@ -97,6 +99,21 @@ const mapCanvas = <HTMLCanvasElement> document.getElementById('cv_maplayer');
 const entityCanvas = <HTMLCanvasElement> document.getElementById('cv_entitylayer');
 var mapManager: MapManager = new MapManager(mapCanvas, 800, 600);
 var entityManager: EntityManager = new EntityManager(entityCanvas, 800, 600);
+var chatManager: ChatManager = new ChatManager();
+chatManager.addMessage("Welcome!", "fff", "");
+
+// Player data elements
+const docElePlayerName = <HTMLSpanElement> document.getElementById('stats_name');
+const docElePlayerHPBar = <HTMLProgressElement> document.getElementById('stats_hpbar');
+const docElePlayerHP = <HTMLSpanElement> document.getElementById('stats_hp');
+const docElePlayerHPMax = <HTMLSpanElement> document.getElementById('stats_hp_max');
+function updatePlayerDocData(player: ClientEntity): void {
+  docElePlayerName.innerHTML = player.name;
+  docElePlayerHPBar.value = player.hp;
+  docElePlayerHPBar.max = player.maxhp;
+  docElePlayerHP.innerHTML = player.hp.toString();
+  docElePlayerHPMax.innerHTML = player.maxhp.toString();
+}
 
 // Receive map data from server
 socket.on('mapdata', function(mapdata: any) {
@@ -122,6 +139,7 @@ socket.on('setentitydata', function(data: any) {
   entityManager.setEntityData(data.id, data.entData);
   if (data.id === -1) {
     mapManager.drawScene(entityManager.mainPlayer);
+    updatePlayerDocData(entityManager.mainPlayer);
   }
   entityManager.drawEntities(mapManager);
 });
@@ -131,8 +149,8 @@ socket.on('mventity', function(data: any) {
   entityManager.moveEntity(data.id, data.x, data.y);
   if (data.id === -1) {
     mapManager.drawScene(entityManager.mainPlayer);
-    entityManager.drawEntities(mapManager);
   }
+  entityManager.drawEntities(mapManager);
 });
 
 // Removes an entity

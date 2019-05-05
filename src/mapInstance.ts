@@ -17,8 +17,8 @@ export class MapInstance {
     /** Add a client to the instance */
     public addClient(socketID: any, clChar: Entity): void {
         if (clChar.id in this._clientList == false) {
-            this._clientList[socketID] = clChar;
             this._map.loadEntity(clChar);
+            this._clientList[socketID] = clChar;
 
             // Send map data to player
             this.emitTo(socketID, 'mapdata', this.map.getClientDict());
@@ -104,6 +104,12 @@ export class MapInstance {
                 this.map.entityAttackEnt(playerChar, target);
                 if (target.hp > 0) {
                     this.emitAll('setentitydata', {id: targID, entData: target.getClientDict()});
+                    for (var c in this._clientList) {
+                        if (this._clientList[c] == target) {
+                            this.emitTo(c, 'setentitydata', {id: -1, entData: target.getClientDict()});
+                            break;
+                        }
+                    }
                 } else {
                     this.emitAll('delentity', {id: targID});
                 }

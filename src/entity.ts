@@ -76,6 +76,7 @@ export class Entity extends Tile {
     public getClientDict(): any {
         var dataDict = {
             id: this.id,
+            name: this.name,
             posX: this.posX,
             posY: this.posY,
             tileID: this.tileID,

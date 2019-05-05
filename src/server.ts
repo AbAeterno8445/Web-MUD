@@ -40,6 +40,7 @@ io.use(sharedsession(sessionMiddleware, {
 }));
 app.use('/static', express.static(path.join(__dirname, 'static')));
 app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
+app.use('/style', express.static(path.join(__dirname, 'style')));
 app.use(express.urlencoded());
 
 // Pages requiring no current session

@@ -1,0 +1,49 @@
+canvas {
+    width: 800px;
+    height: 600px;
+}
+
+#right_column {
+    display: inline-block;
+    vertical-align: top;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+
+#stats {
+    display: inline-block;
+    position: static;
+    color: #babdb6; /* lightgray */
+}
+
+#messages_container {
+    display: block;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.pref_gold {
+    color: #ff0;
+}
+
+progress {
+    border: none;
+    color: #0d0;
+}
+
+progress::-webkit-progress-value {
+    background: #0d0;
+}
+
+progress::-moz-progress-bar {
+    background: #0d0;
+}
+
+progress::-webkit-progress-value {
+    background: #0d0;
+}
+
+progress::-webkit-progress-bar {
+    background: #0d0;
+}

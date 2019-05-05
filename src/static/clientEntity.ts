@@ -4,6 +4,7 @@ export class ClientEntity {
     private _posX: number = 0;
     private _posY: number = 0;
     private _tileID: string = "UNSEEN_MONSTER";
+    private _name: string = "unknown";
     private _hp: number = 0;
     private _maxhp: number = 0;
     private _sightRange: number = 0;
@@ -23,6 +24,10 @@ export class ClientEntity {
     get tileID(): string { return this._tileID; }
     set tileID(tid: string) { this._tileID = tid; }
 
+    // GET/SET name
+    get name(): string { return this._name; }
+    set name(n: string) { this._name = n; }
+
     // GET/SET hp and maxhp
     get hp(): number { return this._hp; }
     set hp(h: number) { this._hp = h; }
@@ -37,6 +42,7 @@ export class ClientEntity {
     /** Sets the entity's data from a given dictionary  
      *  Dictionary format is based on server entity's getClientDict() function */
     public setData(dataDict: any) {
+        this._name = dataDict.name;
         this._posX = dataDict.posX;
         this._posY = dataDict.posY;
         this._tileID = dataDict.tileID;
