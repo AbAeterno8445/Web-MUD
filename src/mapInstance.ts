@@ -96,22 +96,26 @@ export class MapInstance {
     public clientCharAttack(socketID: any, dirX: number, dirY: number): void {
         if (socketID in this._clientList) {
             var playerChar = this._clientList[socketID];
-            var plX = playerChar.posX;
-            var plY = playerChar.posY;
-            var target = this.map.findEntityAt(plX + dirX, plY + dirY);
-            if (target) {
-                var targID = target.id;
-                this.map.entityAttackEnt(playerChar, target);
-                if (target.hp > 0) {
-                    this.emitAll('setentitydata', {id: targID, entData: target.getClientDict()});
-                    for (var c in this._clientList) {
-                        if (this._clientList[c] == target) {
-                            this.emitTo(c, 'setentitydata', {id: -1, entData: target.getClientDict()});
-                            break;
+            if (playerChar.canAttack()) {
+                var plX = playerChar.posX;
+                var plY = playerChar.posY;
+                var target = this.map.findEntityAt(plX + dirX, plY + dirY);
+                if (target) {
+                    var targID = target.id;
+                    this.map.entityAttackEnt(playerChar, target);
+                    if (target.hp > 0) {
+                        this.emitAll('setentitydata', {id: targID, entData: target.getClientDict()});
+                        this.emitTo(socketID, 'msg', {msg: "You attack " + target.name + "!", col: "f77", pref: ""});
+                        for (var c in this._clientList) {
+                            if (this._clientList[c] == target) {
+                                this.emitTo(c, 'setentitydata', {id: -1, entData: target.getClientDict()});
+                                break;
+                            }
                         }
+                    } else {
+                        this.emitAll('delentity', {id: targID});
+                        this.emitTo(socketID, 'msg', {msg: "You kill " + target.name + "!", col: "fbb", pref: ""});
                     }
-                } else {
-                    this.emitAll('delentity', {id: targID});
                 }
             }
         }

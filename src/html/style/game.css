@@ -23,6 +23,14 @@ canvas {
     overflow-y: hidden;
 }
 
+#chat_input {
+    height: 2em;
+    border: 1px solid #ccc;
+    margin: 2px;
+    background-color: black;
+    color: #ccc;
+}
+
 .pref_gold {
     color: #ff0;
 }

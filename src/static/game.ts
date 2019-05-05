@@ -5,6 +5,8 @@ import { ChatManager } from './chatManager';
 
 var socket = io();
 
+const chatInput = <HTMLInputElement> document.getElementById('chat_input');
+
 var attack: boolean = false;
 var movement: any = {
     n: false,
@@ -19,6 +21,17 @@ var movement: any = {
 document.addEventListener('keydown', function(event) {
     // Numbers based on numpad
     switch (event.keyCode) {
+      case 13: // num 13 - enter - chat functionality
+        if (chatInput.value) {
+          socket.emit('chatmsg', chatInput.value);
+          chatInput.value = "";
+          chatInput.blur();
+        } else if (document.activeElement === chatInput) {
+          chatInput.blur();
+        } else {
+          chatInput.focus();
+        }
+      break;
       case 104: // num 8 - north
       movement.n = true;
       break;
@@ -100,7 +113,6 @@ const entityCanvas = <HTMLCanvasElement> document.getElementById('cv_entitylayer
 var mapManager: MapManager = new MapManager(mapCanvas, 800, 600);
 var entityManager: EntityManager = new EntityManager(entityCanvas, 800, 600);
 var chatManager: ChatManager = new ChatManager();
-chatManager.addMessage("Welcome!", "fff", "");
 
 // Player data elements
 const docElePlayerName = <HTMLSpanElement> document.getElementById('stats_name');
@@ -157,4 +169,9 @@ socket.on('mventity', function(data: any) {
 socket.on('delentity', function(data: any) {
   entityManager.removeEntity(data.id);
   entityManager.drawEntities(mapManager);
+});
+
+// Add msg to message box
+socket.on('msg', function(data: any) {
+  chatManager.addMessage(data.msg, data.col, data.pref);
 });

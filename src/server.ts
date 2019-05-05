@@ -219,6 +219,8 @@ io.on('connection', function(socket: any) {
     playerAcc.inGame = true;  // Remove this to enable double-logging
     playerChar.moveTo(2, 2);
     mainInstance.addClient(socket.id, playerChar);
+    mainInstance.emitTo(socket.id, 'msg', {msg: "Welcome, " + playerChar.name + "!", col: "fff", pref: ""});
+    mainInstance.emitOthers(socket.id, 'msg', {msg: playerChar.name + " has joined.", col: "fff", pref: ""});
   });
 
   // Player movement
@@ -241,6 +243,12 @@ io.on('connection', function(socket: any) {
   socket.on('disconnect', function() {
     mainInstance.removeClient(socket.id);
     playerAcc.inGame = false;
+    mainInstance.emitOthers(socket.id, 'msg', {msg: playerChar.name + " has left.", col: "fff", pref: ""});
+  });
+
+  // Player chat
+  socket.on('chatmsg', function(msg: string) {
+    mainInstance.emitAll('msg', {msg: playerChar.name + ": " + msg, col: "cff", pref: ""});
   });
 });
 
