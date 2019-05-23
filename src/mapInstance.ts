@@ -14,6 +14,9 @@ export class MapInstance {
     // GET map
     get map(): Map { return this._map; }
 
+    // GET client list
+    get clientList(): any { return this._clientList; }
+
     /** Add a client to the instance */
     public addClient(socketID: any, clChar: Entity): void {
         if (clChar.id in this._clientList == false) {
@@ -76,6 +79,21 @@ export class MapInstance {
     /** Emit socket message to all clients */
     public emitAll(channel: string, data: any): void {
         this._io.sockets.emit(channel, data);
+    }
+
+    /** Send message to particular player client */
+    public msgTo(client: any, msg: string, color: string, prefix: string): void {
+        this.emitTo(client, 'msg', {msg: msg, col: color, pref: prefix});
+    }
+
+    /** Send message to all but given player client */
+    public msgOthers(client: any, msg: string, color: string, prefix: string): void {
+        this.emitOthers(client, 'msg', {msg: msg, col: color, pref: prefix});
+    }
+
+    /** Send message to all players in this instance */
+    public msgAll(msg: string, color: string, prefix: string): void {
+        this.emitAll('msg', {msg: msg, col: color, pref: prefix});
     }
 
     /** Move client character */

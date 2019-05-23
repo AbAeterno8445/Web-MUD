@@ -9,7 +9,7 @@ export class ChatManager {
     private _messageLog: Message[] = new Array();
 
     /** Add a message to the chat message box       
-     *  Color format is 3 hex characters, eg. 'ff0' */
+     *  Color format is in hex characters, eg. 'ffff00' */
     public addMessage(msg: string, color: string, pref: string): void {
         this._messageLog.push(new Message(msg, color, pref));
 
