@@ -160,7 +160,11 @@ app.get('/createchar', authSession, function(request, response) {
 // Character creation processing
 app.post('/createchar_act', authSession, function(request, response) {
   var char_name = request.body.inp_charname;
-  var char_sprite = request.body.charSprite;
+  var char_sprite_index = +request.body.charSprite;
+  if (char_sprite_index >= charHandler.charCreationList.length) {
+    char_sprite_index = 0;
+  }
+  var char_sprite = charHandler.charCreationList[char_sprite_index];
   
   var result = charHandler.createCharAsync(char_name, char_sprite);
   console.log("Session " + request.sessionID + " attempts to create char " + char_name + ", spr " + char_sprite);
