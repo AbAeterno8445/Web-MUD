@@ -15,6 +15,8 @@ export class Map {
     private _height: number;
     private _entityList: any = {};
     private _entityIDcounter: number = 0;
+    private _spawnX: number = 1;
+    private _spawnY: number = 1;
 
     constructor() {
         this._name = "Unknown";
@@ -29,11 +31,12 @@ export class Map {
             }
         }
 
+        /*
         for (var i = 0; i < 5; i++) {
             var keys = Object.keys(monTiles);
             var entSpr = keys[keys.length * Math.random() << 0];
             this.loadEntity(new Entity("monstro", 2, 6+i, entSpr));
-        }
+        }*/
     }
 
     // GET/SET name
@@ -56,6 +59,12 @@ export class Map {
         }
     }
 
+    // GET spawnpoint X
+    get spawnX(): number { return this._spawnX; }
+
+    // GET spawnpoint Y
+    get spawnY(): number { return this._spawnY; }
+
     // GET entity list
     get entityList(): any { return this._entityList; }
 
@@ -66,10 +75,13 @@ export class Map {
     }
 
     /** Loads the map json file, relative from maps directory */
-    public loadFromFile(file: string): void {
-        var filePath = path.join(__dirname, "maps/" + file);
+    public loadFromFile(mapName: string, callback: Function): void {
+        var filePath = path.join(__dirname, "maps/" + mapName + ".json");
         fs.readFile(filePath, 'utf-8', function(err: any, data: any) {
-            if (err) throw err;
+            if (err) {
+                console.log(err);
+                callback(false);
+            };
 
             var mapObj = JSON.parse(data);
             this._name = mapObj["name"];
@@ -93,9 +105,16 @@ export class Map {
                             newTile.addFlag(tileData[k]);
                         }
                     }
+                    // Spawnpoint
+                    if (newTile.hasFlag("spawn")) {
+                        this._spawnX = newTile.posX;
+                        this._spawnY = newTile.posY;
+                    }
                     this._mapTiles[i].push(newTile);
                 }.bind(this));
             }.bind(this));
+            
+            callback(true);
         }.bind(this));
     }
 

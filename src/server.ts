@@ -2,9 +2,9 @@ import express from 'express';
 import {AccountHandler} from './account-handler';
 import {CharacterHandler} from './character-handler';
 import {SessionHandler} from './session-handler';
-import {Map} from './map';
 import {monTiles} from './consts/monTiles';
-import {MapInstance} from './mapInstance';
+import {MapInstance} from './map-instance';
+import { InstanceManager } from './instance-manager';
 
 const http = require('http');
 const socketIO = require('socket.io');
@@ -197,12 +197,8 @@ server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
 
-const testMap: Map = new Map();
-testMap.loadFromFile("huge.json");
+const instanceManager: InstanceManager = new InstanceManager(io);
 const players: any = {};
-const testInstance: MapInstance = new MapInstance(testMap, io);
-const mapInstances: MapInstance[] = new Array();
-mapInstances.push(testInstance);
 
 // Dictionary for directional actions
 const dirDict: any = {
@@ -224,39 +220,56 @@ io.on('connection', function(socket: any) {
   // Player joins
   socket.on('newpl', function() {
     playerAcc.inGame = true;  // Remove this to enable double-logging
-    playerChar.moveTo(2, 2);
     players[socket.id] = playerChar;
-    testInstance.addClient(socket.id, playerChar);
-    testInstance.msgTo(socket.id, "Welcome, " + playerChar.name + "!", "fff", "");
-    testInstance.msgOthers(socket.id, playerChar.name + " has joined.", "fff", "");
+    var plInstance = instanceManager.getGlobalInstance(playerChar.curMap);
+    if (!plInstance) {
+      plInstance = instanceManager.getGlobalInstance(InstanceManager.defaultMap);
+    }
+    playerChar.curInstance = plInstance;
+    playerChar.moveTo(playerChar.curInstance.map.spawnX, playerChar.curInstance.map.spawnY);
+    plInstance.addClient(socket.id, playerChar);
+    plInstance.msgTo(socket.id, "Welcome, " + playerChar.name + "!", "fff", "");
+    instanceManager.runOnAllInstances((inst: MapInstance) => {
+      inst.msgOthers(socket.id, playerChar.name + " has joined.", "fff", "");
+    });
   });
 
   // Player movement
   socket.on('movement', function(data: any) {
+    if (!playerChar.curInstance) return;
+
     if (data.dir in dirDict) {
       var dirList = dirDict[data.dir];
-      testInstance.clientCharMove(socket.id, dirList[0], dirList[1]);
+      playerChar.curInstance.clientCharMove(socket.id, dirList[0], dirList[1]);
     }
   });
 
   // Player attack
   socket.on('attack', function(data: any) {
+    if (!playerChar.curInstance) return;
+
     if (data.dir in dirDict) {
       var dirList = dirDict[data.dir];
-      testInstance.clientCharAttack(socket.id, dirList[0], dirList[1]);
+      playerChar.curInstance.clientCharAttack(socket.id, dirList[0], dirList[1]);
     }
   });
 
   // Player disconnects
   socket.on('disconnect', function() {
-    testInstance.removeClient(socket.id);
+    if (!playerChar.curInstance) return;
+
+    playerChar.curInstance.removeClient(socket.id);
     playerAcc.inGame = false;
     delete players[socket.id];
-    testInstance.msgOthers(socket.id, playerChar.name + " has left.", "fff", "");
+    instanceManager.runOnAllInstances((inst: MapInstance) => {
+      inst.msgOthers(socket.id, playerChar.name + " has left.", "fff", "");
+    });
   });
 
   // Player chat
   socket.on('chatmsg', function(msg: string) {
+    if (!playerChar.curInstance) return;
+
     var msgPref = msg[0];
     if (msgPref == '/') {
       // Player commands
@@ -265,7 +278,7 @@ io.on('connection', function(socket: any) {
         // Who's online
         case "/who":
           var playerList = new Array();
-          mapInstances.forEach(function(inst: any) {
+          instanceManager.runOnAllInstances(function(inst: any) {
             for (var client in inst.clientList) {
               playerList.push(inst.clientList[client].name);
             }
@@ -278,7 +291,8 @@ io.on('connection', function(socket: any) {
             }
           });
           whoMsg += ".";
-          testInstance.msgTo(socket.id, whoMsg, "fff", "");
+
+          playerChar.curInstance.msgTo(socket.id, whoMsg, "fff", "");
         break;
 
         // Whisper player
@@ -287,32 +301,32 @@ io.on('connection', function(socket: any) {
           var whisperMsg = msgArgs.slice(2).join(' ');
           var success = false;
           for (var pl in players) {
-            var plChar = players[pl];
-            if (plChar.name == recipient) {
-              if (plChar === playerChar) {
-                testInstance.msgTo(socket.id, "You mutter to yourself: " + whisperMsg, "9A2EFE", "<");
+            var targetChar = players[pl];
+            if (targetChar.name == recipient) {
+              if (targetChar === playerChar) {
+                playerChar.curInstance.msgTo(socket.id, "You mutter to yourself: " + whisperMsg, "9A2EFE", "<");
               } else {
-                testInstance.msgTo(pl, playerChar.name + " tells you: " + whisperMsg, "9A2EFE", "<");
-                testInstance.msgTo(socket.id, "You tell " + plChar.name + ": " + whisperMsg, "D358F7", ">");
+                targetChar.curInstance.msgTo(pl, playerChar.name + " tells you: " + whisperMsg, "9A2EFE", "<");
+                playerChar.curInstance.msgTo(socket.id, "You tell " + targetChar.name + ": " + whisperMsg, "D358F7", ">");
               }
               success = true;
               break;
             }
           }
           if (!success) {
-            testInstance.msgTo(socket.id, "No player named " + recipient + "!", "FE2E2E", "");
+            playerChar.curInstance.msgTo(socket.id, "No player named " + recipient + "!", "FE2E2E", "");
           }
         break;
       }
     } else if (msgPref == '#') {
       // Global chat
       msg = msg.slice(1);
-      mapInstances.forEach(function(inst: any) {
-        inst.msgAll(playerChar.name + ": " + msg, "f80", "G");
+      instanceManager.runOnAllInstances((inst: any) => {
+        inst.msgAll(playerChar.name + ": " + msg, "f80", "#");
       });
     } else {
       // Local chat
-      testInstance.msgLocal(playerChar.posX, playerChar.posY, playerChar.name + ": " + msg, "cff", "");
+      playerChar.curInstance.msgLocal(playerChar.posX, playerChar.posY, playerChar.name + ": " + msg, "cff", "");
     }
   });
 });
@@ -320,5 +334,7 @@ io.on('connection', function(socket: any) {
 // Process tick
 setInterval(function() {
   // Update maps
-  testInstance.update();
+  instanceManager.runOnAllInstances((inst: MapInstance) => {
+    inst.update();
+  });
 }, 1000 / 60);

@@ -78,7 +78,9 @@ export class MapInstance {
 
     /** Emit socket message to all clients */
     public emitAll(channel: string, data: any): void {
-        this._io.sockets.emit(channel, data);
+        for (var sockID in this._clientList) {
+            this.emitTo(sockID, channel, data);
+        }
     }
 
     /** Send message to particular player client */

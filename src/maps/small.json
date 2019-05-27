@@ -1,0 +1,17 @@
+{
+    "name": "huge",
+    "tileData": {
+        "1": "WALL_BRICK_BROWN0",
+        "2": "FLOOR_GRASS_GRASS0_DIRT_MIX1",
+        "3": "TREE1"
+    },
+    "mapTiles": [
+        ["1:w:ns", "1:w:ns", "1:w:ns", "1:w:ns", "1:w:ns", "1:w:ns", "1:w:ns"],
+        ["1:w:ns", "2", "3:w", "2", "3:w", "3:w", "1:w:ns"],
+        ["1:w:ns", "2", "2", "2", "2", "3:w", "1:w:ns"],
+        ["1:w:ns", "2", "2", "2:spawn", "2", "2", "1:w:ns"],
+        ["1:w:ns", "3:w", "2", "3:w", "3:w", "2", "1:w:ns"],
+        ["1:w:ns", "3:w", "2", "2", "2", "2", "1:w:ns"],
+        ["1:w:ns", "1:w:ns", "1:w:ns", "1:w:ns", "1:w:ns", "1:w:ns", "1:w:ns"]
+    ]
+}
