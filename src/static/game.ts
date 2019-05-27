@@ -110,6 +110,7 @@ setInterval(function() {
 
 const mapCanvas = <HTMLCanvasElement> document.getElementById('cv_maplayer');
 const entityCanvas = <HTMLCanvasElement> document.getElementById('cv_entitylayer');
+const itemCanvas = <HTMLCanvasElement> document.getElementById('cv_itemlayer');
 var mapManager: MapManager = new MapManager(mapCanvas, 800, 600);
 var entityManager: EntityManager = new EntityManager(entityCanvas, 800, 600);
 var chatManager: ChatManager = new ChatManager();

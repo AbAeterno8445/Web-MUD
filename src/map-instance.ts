@@ -131,6 +131,10 @@ export class MapInstance {
                 var plY = playerChar.posY;
                 var target = this.map.findEntityAt(plX + dirX, plY + dirY);
                 if (target) {
+                    // Check if target is not player
+                    for (var cl in this.clientList) {
+                        if (this.clientList[cl] === target) return;
+                    }
                     var targID = target.id;
                     this.map.entityAttackEnt(playerChar, target);
                     if (target.hp > 0) {

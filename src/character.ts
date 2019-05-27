@@ -1,10 +1,12 @@
 import { Entity } from "./entity";
 import { MapInstance } from "./map-instance";
+import { Item } from "./item";
 
 export class Character extends Entity {
     private _charID: number;
     private _curMap: string;
     private _curInstance: MapInstance;
+    private _inventory: Item[] = new Array();
 
     constructor(charID: number, name: string, x: number, y: number, sprite: string) {
         super(name, x, y, sprite);
