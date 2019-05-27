@@ -91,6 +91,16 @@ export class MapInstance {
         this.emitOthers(client, 'msg', {msg: msg, col: color, pref: prefix});
     }
 
+    /** Send message to players near position (within 8 tiles) */
+    public msgLocal(x: number, y: number, msg: string, color: string, prefix: string): void {
+        for (var cl in this._clientList) {
+            var clChar = this._clientList[cl];
+            if (Map.distBetweenPos(x, y, clChar.posX, clChar.posY) <= 8) {
+                this.msgTo(cl, msg, color, prefix);
+            }
+        }
+    }
+
     /** Send message to all players in this instance */
     public msgAll(msg: string, color: string, prefix: string): void {
         this.emitAll('msg', {msg: msg, col: color, pref: prefix});

@@ -158,6 +158,11 @@ export class Map {
         return false;
     }
 
+    /** Returns the distance between two positions */
+    static distBetweenPos(x1: number, y1: number, x2: number, y2: number): number {
+        return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+    }
+
     /** Load a previously created entity into the map */
     public loadEntity(ent: Entity): void {
         if (ent.id && ent.id in this._entityList && this._entityList[ent.id] == ent) {

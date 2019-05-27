@@ -277,6 +277,7 @@ io.on('connection', function(socket: any) {
               whoMsg += ", ";
             }
           });
+          whoMsg += ".";
           testInstance.msgTo(socket.id, whoMsg, "fff", "");
         break;
 
@@ -311,7 +312,7 @@ io.on('connection', function(socket: any) {
       });
     } else {
       // Local chat
-      testInstance.msgAll(playerChar.name + ": " + msg, "cff", "");
+      testInstance.msgLocal(playerChar.posX, playerChar.posY, playerChar.name + ": " + msg, "cff", "");
     }
   });
 });
