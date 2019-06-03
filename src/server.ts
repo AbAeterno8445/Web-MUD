@@ -192,6 +192,11 @@ app.get('/game', authSession, authSessionChar, function(request, response) {
   }
 });
 
+// Map editor
+app.get('/mapeditor', function(request, response) {
+  response.render('editor/mapeditor.ejs');
+});
+
 // Starts the server.
 server.listen(5000, function() {
   console.log('Starting server on port 5000');
