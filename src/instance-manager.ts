@@ -1,6 +1,6 @@
 import { MapInstance } from './map-instance';
 import { Map } from './map';
-ºimport { Character } from './character';
+import { Character } from './character';
 
 /**
  * Instances variable structure:    
