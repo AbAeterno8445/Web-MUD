@@ -6,12 +6,13 @@ export class Character extends Entity {
     private _charID: number;
     private _curMap: string;
     private _curInstance: MapInstance;
+    private _boundMap: string;
     private _inventory: Item[] = new Array();
 
     constructor(charID: number, name: string, x: number, y: number, sprite: string) {
         super(name, x, y, sprite);
         this._charID = charID;
-        this._curMap = "huge";
+        this._boundMap = "huge";
     }
 
     // GET/SET charID
@@ -25,4 +26,8 @@ export class Character extends Entity {
     // GET/SET current instance
     get curInstance(): MapInstance { return this._curInstance; }
     set curInstance(inst: MapInstance) { this._curInstance = inst; }
+
+    // GET/SET bound map name
+    get boundMap(): string { return this._boundMap; }
+    set boundMap(m: string) { this._boundMap = m; }
 }

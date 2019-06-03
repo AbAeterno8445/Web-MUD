@@ -221,12 +221,12 @@ io.on('connection', function(socket: any) {
   socket.on('newpl', function() {
     playerAcc.inGame = true;  // Remove this to enable double-logging
     players[socket.id] = playerChar;
-    var plInstance = instanceManager.getGlobalInstance(playerChar.curMap);
-    if (!plInstance) {
-      plInstance = instanceManager.getGlobalInstance(InstanceManager.defaultMap);
-    }
-    playerChar.curInstance = plInstance;
-    playerChar.moveTo(playerChar.curInstance.map.spawnX, playerChar.curInstance.map.spawnY);
+    var plInstance = instanceManager.getPlayerJoinMap(playerChar);
+
+    // Place player at map spawnpoint
+    var spawnPos = plInstance.getNewBindPos();
+    playerChar.moveTo(spawnPos[0], spawnPos[1]);
+
     plInstance.addClient(socket.id, playerChar);
     plInstance.msgTo(socket.id, "Welcome, " + playerChar.name + "!", "fff", "");
     instanceManager.runOnAllInstances((inst: MapInstance) => {

@@ -15,8 +15,13 @@ export class Map {
     private _height: number;
     private _entityList: any = {};
     private _entityIDcounter: number = 0;
-    private _spawnX: number = 1;
-    private _spawnY: number = 1;
+    private _bind: boolean = false;
+    private _bindX: number = 1;
+    private _bindY: number = 1;
+    private _bindRad: number = 1;
+    private _tpX: number = 1;
+    private _tpY: number = 1;
+    private _tpRad: number = 1;
 
     constructor() {
         this._name = "Unknown";
@@ -59,11 +64,14 @@ export class Map {
         }
     }
 
-    // GET spawnpoint X
-    get spawnX(): number { return this._spawnX; }
+    // GET bind spot X
+    get bindX(): number { return this._bindX; }
 
-    // GET spawnpoint Y
-    get spawnY(): number { return this._spawnY; }
+    // GET bind spot Y
+    get bindY(): number { return this._bindY; }
+
+    // GET bind area radius
+    get bindRad(): number { return this._bindRad; }
 
     // GET entity list
     get entityList(): any { return this._entityList; }
@@ -102,13 +110,27 @@ export class Map {
                     // Tile flags
                     if (tileData.length > 1) {
                         for (var k = 1; k < tileData.length; k++) {
-                            newTile.addFlag(tileData[k]);
+                            var flag = tileData[k];
+                            var flagData = flag.split('/');
+                            newTile.addFlag(flagData[0]);
+                            // Special flags
+                            if (flagData.length > 1) {
+                                switch(flagData[0]) {
+                                    // Bind spot (bind radius)
+                                    case "bind":
+                                        this._bindX = j;
+                                        this._bindY = i;
+                                        this._bindRad = +flagData[1];
+                                    break;
+                                    // Town portal area (area radius)
+                                    case "tparea":
+                                        this._tpX = j;
+                                        this._tpY = i;
+                                        this._tpRad = +flagData[1];
+                                    break;
+                                }
+                            }
                         }
-                    }
-                    // Spawnpoint
-                    if (newTile.hasFlag("spawn")) {
-                        this._spawnX = newTile.posX;
-                        this._spawnY = newTile.posY;
                     }
                     this._mapTiles[i].push(newTile);
                 }.bind(this));
@@ -126,44 +148,6 @@ export class Map {
             tileData: this._mapTileData
         }
         return clientDict;
-    }
-
-    /** Resizes the map */
-    public resize(w: number, h: number): void {
-        const old_width = this.width;
-        const old_height = this.height;
-
-        this.width = w;
-        this.height = h;
-
-        // Resize width
-        if (this.width > old_width) {
-            for (let i = 0; i < old_height; i++) {
-                for (let j = old_width; j < this.width; j++) {
-                    this._mapTiles[i].push(new Tile(j, i, defaultTile));
-                }
-            }
-        } else if (this.width < old_width) {
-            for (let i = 0; i < old_height; i++) {
-                for (let j = old_width; j > this.width; j--) {
-                    this._mapTiles[i].pop();
-                }
-            }
-        }
-
-        // Resize height
-        if (this.height > old_height) {
-            for (let i = old_height; i < this.height; i++) {
-                this._mapTiles.push([]);
-                for (let j = 0; j < this.width; j++) {
-                    this._mapTiles[i].push(new Tile(j, i, defaultTile));
-                }
-            }
-        } else if (this.height < old_height) {
-            for (let i = old_height; i > this.height; i--) {
-                this._mapTiles.pop();
-            }
-        }
     }
 
     /** Returns whether the given position is currently walkable */

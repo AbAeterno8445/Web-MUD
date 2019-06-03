@@ -65,7 +65,7 @@ export class CharacterHandler {
     }
 
     /** Update JSON to state of characters list */
-    private _updateJSON(): void {
+    public updateJSON(): void {
         var charObj = {
             "characters": this._characterList
         }
@@ -96,7 +96,7 @@ export class CharacterHandler {
         };
 
         this._charIDcounter++;
-        this._updateJSON();
+        this.updateJSON();
         return 2;
     }
 }

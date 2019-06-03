@@ -11,4 +11,16 @@ export class Item extends Tile {
     // GET/SET name
     get name(): string { return this._name; }
     set name(n: string) { this._name = n; }
+
+    /** Returns the data dictionary for client-side items    
+     * Client-side items should be structured based on this data */
+    public getClientDict(): any {
+        var dataDict = {
+            name: this.name,
+            posX: this.posX,
+            posY: this.posY,
+            tileID: this.tileID
+        }
+        return dataDict;
+    }
 }

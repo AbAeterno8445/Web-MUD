@@ -1,5 +1,5 @@
 import {Map} from "./map";
-import { Entity } from "./entity";
+import { Character } from "./character";
 
 export class MapInstance {
     private _io: any;
@@ -18,9 +18,11 @@ export class MapInstance {
     get clientList(): any { return this._clientList; }
 
     /** Add a client to the instance */
-    public addClient(socketID: any, clChar: Entity): void {
+    public addClient(socketID: any, clChar: Character): void {
         if (clChar.id in this._clientList == false) {
             this._map.loadEntity(clChar);
+            clChar.curInstance = this;
+            clChar.curMap = this.map.name;
             this._clientList[socketID] = clChar;
 
             // Send map data to player
@@ -29,7 +31,7 @@ export class MapInstance {
             this.emitTo(socketID, 'setentitydata', {id: -1, entData: clChar.getClientDict()});
             // New player creation for others
             this.emitOthers(socketID, 'newentity', clChar.getClientDict());
-            // Other entity creation for new player
+            // Other entities for new player
             for (var e in this.map.entityList) {
                 var ent = this.map.entityList[e];
                 if (ent === clChar) continue;
@@ -39,7 +41,7 @@ export class MapInstance {
     }
 
     /** Find a client given its id, returns undefined if none found */
-    public findClient(socketID: any): Entity {
+    public findClient(socketID: any): Character {
         if (socketID in this._clientList) {
             return this._clientList[socketID];
         }
@@ -106,6 +108,15 @@ export class MapInstance {
     /** Send message to all players in this instance */
     public msgAll(msg: string, color: string, prefix: string): void {
         this.emitAll('msg', {msg: msg, col: color, pref: prefix});
+    }
+
+    /** Returns a new position from the bind spot for respawning players */
+    public getNewBindPos(): number[] {
+        var bindPos = new Array();
+        var xOff = Math.floor(Math.random()*(this.map.bindRad*2+1)-this.map.bindRad);
+        var yOff = Math.floor(Math.random()*(this.map.bindRad*2+1)-this.map.bindRad);
+        bindPos.push(this.map.bindX + xOff, this.map.bindY + yOff);
+        return bindPos;
     }
 
     /** Move client character */

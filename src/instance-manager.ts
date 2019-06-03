@@ -1,11 +1,12 @@
 import { MapInstance } from './map-instance';
 import { Map } from './map';
+ºimport { Character } from './character';
 
 /**
- * Instances variable structure:
- * _instances -> object that holds all maps defined in static mapList
- * _instances["town"] -> object that holds created instances for map "town"
- * _instances["town"]["John"] -> Array of instances for map "town", player John
+ * Instances variable structure:    
+ * _instances -> object that holds all maps defined in static mapList   
+ * _instances["town"] -> object that holds created instances for map "town"     
+ * _instances["town"]["John"] -> Array of instances for map "town", player John     
  */
 export class InstanceManager {
     private _instances: any = {};
@@ -65,6 +66,18 @@ export class InstanceManager {
     /** Return a map's global instance if it exists, returns undefined otherwise */
     public getGlobalInstance(baseMap: string): MapInstance {
         return this.getParticularInstance(baseMap, "global", 0);
+    }
+
+    /** Return the instance a joining player should enter   
+     *  When leaving, players persist on their last map for 5 minutes. Past that time, they'll join their
+     *  last bound map instead (usually towns).*/
+    public getPlayerJoinMap(char: Character): MapInstance {
+        var lastMap = this.getGlobalInstance(char.curMap);
+        var boundMap = this.getGlobalInstance(char.boundMap);
+        if (!lastMap) {
+            return boundMap;
+        }
+        return lastMap;
     }
 
     /** Run the callback function over all created instances */
