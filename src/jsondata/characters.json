@@ -3,32 +3,8 @@
         {
             "_posX": 0,
             "_posY": 0,
-            "_tileID": "HUMANOIDS_BOGGART",
-            "_flags": [],
-            "_cooldownList": {
-                "mvSpeed": 0,
-                "attSpeed": 0
-            },
-            "_name": "lord cebolla",
-            "_level": 1,
-            "_mvSpeed": 0.4,
-            "_attSpeed": 0.6,
-            "_maxhp": 20,
-            "_dmgPhys": 1,
-            "_sightRange": 7,
-            "_hp": 20,
-            "_charID": 1
-        },
-        {
-            "_posX": 0,
-            "_posY": 0,
             "_tileID": "UNDEAD_MUMMY_PRIEST",
-            "_flags": [],
-            "_cooldownList": {
-                "mvSpeed": 0,
-                "attSpeed": 0
-            },
-            "_name": "lord lechuga",
+            "_name": "loco",
             "_level": 1,
             "_mvSpeed": 0.4,
             "_attSpeed": 0.6,
@@ -36,140 +12,9 @@
             "_dmgPhys": 1,
             "_sightRange": 7,
             "_hp": 20,
-            "_charID": 2
-        },
-        {
-            "_posX": 0,
-            "_posY": 0,
-            "_tileID": "HUMANOIDS_DWARF",
-            "_flags": [],
-            "_cooldownList": {
-                "mvSpeed": 0,
-                "attSpeed": 0
-            },
-            "_name": "dorfe",
-            "_level": 1,
-            "_mvSpeed": 0.4,
-            "_attSpeed": 0.6,
-            "_maxhp": 20,
-            "_dmgPhys": 1,
-            "_sightRange": 7,
-            "_hp": 20,
-            "_charID": 3
-        },
-        {
-            "_posX": 0,
-            "_posY": 0,
-            "_tileID": "HUMANOIDS_GOBLIN",
-            "_flags": [],
-            "_cooldownList": {
-                "mvSpeed": 0,
-                "attSpeed": 0
-            },
-            "_name": "ELGOBLINO",
-            "_level": 1,
-            "_mvSpeed": 0.4,
-            "_attSpeed": 0.6,
-            "_maxhp": 20,
-            "_dmgPhys": 1,
-            "_sightRange": 7,
-            "_hp": 20,
-            "_charID": 4
-        },
-        {
-            "_posX": 0,
-            "_posY": 0,
-            "_tileID": "HUMANOIDS_BOGGART",
-            "_flags": [],
-            "_cooldownList": {
-                "mvSpeed": 0,
-                "attSpeed": 0
-            },
-            "_name": "bogo",
-            "_level": 1,
-            "_mvSpeed": 0.4,
-            "_attSpeed": 0.6,
-            "_maxhp": 20,
-            "_dmgPhys": 1,
-            "_sightRange": 7,
-            "_hp": 20,
-            "_charID": 5
-        },
-        {
-            "_posX": 0,
-            "_posY": 0,
-            "_tileID": "HUMANOIDS_GOBLIN",
-            "_flags": [],
-            "_cooldownList": {
-                "mvSpeed": 0,
-                "attSpeed": 0
-            },
-            "_name": "gublinium",
-            "_level": 1,
-            "_mvSpeed": 0.4,
-            "_attSpeed": 0.6,
-            "_maxhp": 20,
-            "_dmgPhys": 1,
-            "_sightRange": 7,
-            "_hp": 20,
-            "_charID": 6
-        },
-        {
-            "_posX": 0,
-            "_posY": 0,
-            "_tileID": "HUMANOIDS_BOGGART",
-            "_flags": [],
-            "_cooldownList": {
-                "mvSpeed": 0,
-                "attSpeed": 0
-            },
-            "_name": "telbogo",
-            "_level": 1,
-            "_mvSpeed": 0.4,
-            "_attSpeed": 0.6,
-            "_maxhp": 20,
-            "_dmgPhys": 1,
-            "_sightRange": 7,
-            "_hp": 20,
-            "_charID": 7
-        },
-        {
-            "_posX": 0,
-            "_posY": 0,
-            "_tileID": "UNIQUE_CEREBOV",
-            "_flags": [],
-            "_cooldownList": {
-                "mvSpeed": 0,
-                "attSpeed": 0
-            },
-            "_name": "Cerebov",
-            "_level": 1,
-            "_mvSpeed": 0.4,
-            "_attSpeed": 0.6,
-            "_maxhp": 20,
-            "_dmgPhys": 1,
-            "_sightRange": 7,
-            "_hp": 20,
-            "_charID": 8
-        },
-        {
-            "_posX": 0,
-            "_posY": 0,
-            "_tileID": "UNIQUE_LOM_LOBON",
-            "_flags": [],
-            "_cooldownList": {
-                "mvSpeed": 0,
-                "attSpeed": 0
-            },
-            "_name": "LomLobon",
-            "_level": 1,
-            "_mvSpeed": 0.4,
-            "_attSpeed": 0.6,
-            "_maxhp": 20,
-            "_dmgPhys": 1,
-            "_sightRange": 7,
-            "_hp": 20,
-            "_charID": 9
+            "_inventory": [],
+            "_charID": 1,
+            "_boundMap": "huge"
         }
     ]
 }

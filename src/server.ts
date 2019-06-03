@@ -221,17 +221,7 @@ io.on('connection', function(socket: any) {
   socket.on('newpl', function() {
     playerAcc.inGame = true;  // Remove this to enable double-logging
     players[socket.id] = playerChar;
-    var plInstance = instanceManager.getPlayerJoinMap(playerChar);
-
-    // Place player at map spawnpoint
-    var spawnPos = plInstance.getNewBindPos();
-    playerChar.moveTo(spawnPos[0], spawnPos[1]);
-
-    plInstance.addClient(socket.id, playerChar);
-    plInstance.msgTo(socket.id, "Welcome, " + playerChar.name + "!", "fff", "");
-    instanceManager.runOnAllInstances((inst: MapInstance) => {
-      inst.msgOthers(socket.id, playerChar.name + " has joined.", "fff", "");
-    });
+    instanceManager.playerFirstJoin(socket.id, playerChar);
   });
 
   // Player movement
@@ -240,7 +230,7 @@ io.on('connection', function(socket: any) {
 
     if (data.dir in dirDict) {
       var dirList = dirDict[data.dir];
-      playerChar.curInstance.clientCharMove(socket.id, dirList[0], dirList[1]);
+      playerChar.curInstance.clientCharMoveDir(socket.id, dirList[0], dirList[1]);
     }
   });
 
@@ -315,6 +305,35 @@ io.on('connection', function(socket: any) {
           }
           if (!success) {
             playerChar.curInstance.msgTo(socket.id, "No player named " + recipient + "!", "FE2E2E", "");
+          }
+        break;
+
+        // Bind to map
+        case "/bind":
+          var plMap = playerChar.curInstance.map;
+          if (plMap.bind) {
+            playerChar.curInstance.msgTo(socket.id, "You are now bound to this map. You will respawn here on death or when logging out.", "fff", "");
+            playerChar.boundMap = plMap.name;
+          } else {
+            playerChar.curInstance.msgTo(socket.id, "You can't bind to this map!", "fff", "");
+          }
+        break;
+
+        // Unbind - return binding to default map
+        case "/unbind":
+          playerChar.curInstance.msgTo(socket.id, "You are now bound to the default map.", "fff", "");
+          playerChar.boundMap = InstanceManager.defaultBind;
+        break;
+
+        // DEBUG - teleport to map
+        case "/tp":
+          var targetMap = instanceManager.getGlobalInstance(msgArgs[1]);
+          var targetX = +msgArgs[2];
+          var targetY = +msgArgs[3];
+          if (targetMap) {
+            playerChar.curInstance.removeClient(socket.id);
+            targetMap.addClient(socket.id, playerChar);
+            targetMap.clientCharMoveTo(socket.id, targetX, targetY, false);
           }
         break;
       }

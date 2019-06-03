@@ -30,4 +30,15 @@ export class Character extends Entity {
     // GET/SET bound map name
     get boundMap(): string { return this._boundMap; }
     set boundMap(m: string) { this._boundMap = m; }
+
+    /** Returns an object with the relevant save-data for the character */
+    public getSaveData(): any {
+        var attrObj: any = {};
+        var attrIgnore = ["_curInstance", "_flags", "_cooldownList"];
+        for (var attr in this) {
+            if (attrIgnore.includes(attr)) continue;
+            attrObj[attr] = this[attr];
+        }
+        return attrObj;
+    }
 }

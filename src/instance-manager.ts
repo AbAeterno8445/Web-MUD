@@ -19,7 +19,7 @@ export class InstanceManager {
     }
     /** Default map, should be loaded when no map is found for a player.    
      *  Should always have a global instance available. */
-    public static defaultMap = InstanceManager.mapList.huge;
+    public static defaultBind = InstanceManager.mapList.huge;
 
     constructor(io: any) {
         this._io = io;
@@ -71,13 +71,21 @@ export class InstanceManager {
     /** Return the instance a joining player should enter   
      *  When leaving, players persist on their last map for 5 minutes. Past that time, they'll join their
      *  last bound map instead (usually towns).*/
-    public getPlayerJoinMap(char: Character): MapInstance {
-        var lastMap = this.getGlobalInstance(char.curMap);
-        var boundMap = this.getGlobalInstance(char.boundMap);
-        if (!lastMap) {
-            return boundMap;
+    public playerFirstJoin(charSocket: any, char: Character): void {
+        var plInst = this.getGlobalInstance(char.curMap);
+        if (!plInst) {
+            plInst = this.getGlobalInstance(char.boundMap);
         }
-        return lastMap;
+        // Bound map - place player around binding spot
+        if (char.boundMap == plInst.map.name) {
+            var spawnPos = plInst.getNewBindPos();
+            char.moveTo(spawnPos[0], spawnPos[1]);
+        }
+        plInst.addClient(charSocket, char);
+        plInst.msgTo(charSocket, "Welcome, " + char.name + "!", "fff", "");
+        this.runOnAllInstances((inst: MapInstance) => {
+            inst.msgOthers(charSocket, char.name + " has joined.", "fff", "");
+        });
     }
 
     /** Run the callback function over all created instances */

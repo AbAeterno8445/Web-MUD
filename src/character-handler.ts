@@ -33,6 +33,7 @@ export class CharacterHandler {
             charObj["characters"].forEach((char: any) => {
                 var res = this._addCharToList(char._charID, char._name, char._tileID);
             });
+            this.updateJSON();
             this._listReady = true;
         }.bind(this));
     }
@@ -66,8 +67,12 @@ export class CharacterHandler {
 
     /** Update JSON to state of characters list */
     public updateJSON(): void {
+        var tmpCharList = new Array();
+        this._characterList.forEach(function(char: Character) {
+            tmpCharList.push(char.getSaveData());
+        });
         var charObj = {
-            "characters": this._characterList
+            "characters": tmpCharList
         }
         fs.writeFile(this._listPath, JSON.stringify(charObj, null, 4), function(err: any) {
             if (err) throw err;

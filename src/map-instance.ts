@@ -119,14 +119,26 @@ export class MapInstance {
         return bindPos;
     }
 
-    /** Move client character */
-    public clientCharMove(socketID: any, dirX: number, dirY: number): void {
+    /** Move client character in a direction */
+    public clientCharMoveDir(socketID: any, dirX: number, dirY: number): void {
         if (socketID in this._clientList) {
             var playerChar = this._clientList[socketID];
             var plX = playerChar.posX;
             var plY = playerChar.posY;
             if (this.map.tileCollFree(plX + dirX, plY + dirY)) {
                 playerChar.moveDir(dirX, dirY);
+                this.emitTo(socketID, 'mventity', {id: -1, x: playerChar.posX, y: playerChar.posY});
+                this.emitOthers(socketID, 'mventity', {id: playerChar.id, x: playerChar.posX, y: playerChar.posY});
+            }
+        }
+    }
+
+    /** Move client character directly to position, ignoring movement cooldowns. Can ignore collision */
+    public clientCharMoveTo(socketID: any, x: number, y: number, collision: boolean): void {
+        if (socketID in this._clientList) {
+            var playerChar = this._clientList[socketID];
+            if (!collision || (collision && this.map.tileCollFree(x, y))) {
+                playerChar.moveTo(x, y);
                 this.emitTo(socketID, 'mventity', {id: -1, x: playerChar.posX, y: playerChar.posY});
                 this.emitOthers(socketID, 'mventity', {id: playerChar.id, x: playerChar.posX, y: playerChar.posY});
             }

@@ -64,6 +64,9 @@ export class Map {
         }
     }
 
+    // GET bindable
+    get bind(): boolean { return this._bind; }
+
     // GET bind spot X
     get bindX(): number { return this._bindX; }
 

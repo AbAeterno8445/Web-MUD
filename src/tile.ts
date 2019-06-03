@@ -6,6 +6,7 @@ export class Tile {
     private _posY: number;
     private _tileID: string;
     private _flags: string[];
+    private _foreTile: string;
 
     constructor(x: number, y:number, id: string) {
         this._posX = x;
@@ -28,6 +29,10 @@ export class Tile {
 
     // GET flags
     get flags(): string[] { return this._flags; }
+
+    // GET/SET foreground tile
+    get foreTile(): string { return this._foreTile; }
+    set foreTile(f: string) { this._foreTile = f; }
 
     /** Add a flag to the tile */
     public addFlag(f: string): void {
