@@ -5,6 +5,7 @@ import {SessionHandler} from './session-handler';
 import {monTiles} from './consts/monTiles';
 import {MapInstance} from './map-instance';
 import { InstanceManager } from './instance-manager';
+import { dngnTiles } from './consts/dngnTiles';
 
 const http = require('http');
 const socketIO = require('socket.io');
@@ -194,7 +195,8 @@ app.get('/game', authSession, authSessionChar, function(request, response) {
 
 // Map editor
 app.get('/mapeditor', function(request, response) {
-  response.render('editor/mapeditor.ejs');
+  var paletteTiles = dngnTiles;
+  response.render('editor/mapeditor.ejs', {paletteTiles});
 });
 
 // Starts the server.

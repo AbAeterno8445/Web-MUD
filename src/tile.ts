@@ -36,7 +36,16 @@ export class Tile {
 
     /** Add a flag to the tile */
     public addFlag(f: string): void {
-        this._flags.push(f);
+        if (!this.hasFlag(f)) {
+            this._flags.push(f);
+        }
+    }
+
+    /** Add multiple flags to the tile, receives a list of strings(flags) */
+    public addFlags(fList: string[]): void {
+        fList.forEach(function(flag: string) {
+            this.addFlag(flag);
+        }.bind(this));
     }
 
     /** Remove a flag from the tile */

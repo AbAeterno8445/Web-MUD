@@ -12,12 +12,21 @@
   <body>
     <div>
         <div id="left-column">
-
+          <input type="file" id="inpFile" accept=".json" value="Load Map JSON">
         </div>
         <div id="right-column">
-          <div class="disp-canvas">
-            <canvas id="cv_maplayer" style="z-index: 0;"></canvas>
-          </div>
+          <table>
+            <tr>
+              <td>
+                <div class="disp-canvas">
+                  <canvas id="cv_maplayer" style="z-index:0;"></canvas>
+                </div>
+              </td>
+              <td>
+                <div id="tile-palette-div" class="tile-palette"></div>
+              </td>
+            </tr>
+          </table>
         </div>
     </div>
   </body>

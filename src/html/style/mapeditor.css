@@ -10,14 +10,35 @@
     width: 85%;
 }
 
+#inpFile {
+    width: 100%;
+    color: white;
+    background-color: #555;
+    border: 1px solid white;
+}
+
 .disp-canvas {
     position: relative;
+    float: left;
 }
 
 .disp-canvas canvas {
-    position: absolute;
     left: 0;
     top: 0;
     width: 800px;
     height: 600px;
+    border: 1px solid #ccc;
+}
+
+.tile-palette {
+    float: right;
+    width: auto;
+    height: 600px;
+    overflow: auto;
+    background-color: #ccc;
+}
+
+.palette-tile {
+    width: 32px;
+    height: 32px;
 }
