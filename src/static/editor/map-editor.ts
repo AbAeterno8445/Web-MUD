@@ -188,11 +188,10 @@ function canvasClick(event: any): void {
             if (keysHeld.shift) {
                 // TEST - flood fill
                 mainMap.floodFillAt(tileX, tileY, newTile);
-                renderer.drawScene()
             } else {
                 mainMap.replaceTile(tileX, tileY, newTile);
-                renderer.drawScene();
             }
+            renderer.drawScene();
         }
     }
 };
