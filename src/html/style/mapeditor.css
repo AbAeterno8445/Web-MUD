@@ -1,20 +1,31 @@
+body {
+    background-color: #444;
+}
+
+div {
+    text-align: center;
+}
+
 #left-column {
     float: left;
     width: 15%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    background-color: #222;
+    border: 1px solid #2e9afe;
 }
 
 #right-column {
     float: right;
-    width: 85%;
+    width: 83%;
+    color: white;
 }
 
 #inpFile {
     width: 100%;
     color: white;
     background-color: #555;
-    border: 1px solid white;
+    border: 1px solid #2e9afe;
 }
 
 .disp-canvas {
@@ -27,7 +38,8 @@
     top: 0;
     width: 800px;
     height: 600px;
-    border: 1px solid #ccc;
+    background-color: #222;
+    border: 1px solid #2e9afe;
 }
 
 .tile-palette {
@@ -35,10 +47,17 @@
     width: auto;
     height: 600px;
     overflow: auto;
-    background-color: #ccc;
+    background-color: #222;
+    border: 1px solid #2e9afe;
 }
 
 .palette-tile {
     width: 32px;
     height: 32px;
+}
+
+.tile-preview-img {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ccc;
 }

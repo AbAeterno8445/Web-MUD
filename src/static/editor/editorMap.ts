@@ -8,6 +8,7 @@ const path = require('path');
 export class EditorMap {
     private _mapTiles: Tile[][];
     private _mapTileData: any = {};
+    private _loaded: boolean = false;
     private _name: string;
     private _width: number;
     private _height: number;
@@ -30,6 +31,9 @@ export class EditorMap {
     get name(): string { return this._name; }
     set name(n: string) { this._name = n; }
 
+    // GET map loaded
+    get loaded(): boolean { return this._loaded; }
+
     // GET/SET width
     get width(): number { return this._width; }
     set width(w: number) {
@@ -49,8 +53,13 @@ export class EditorMap {
     // GET map tile matrix
     get mapTiles(): Tile[][] { return this._mapTiles; }
 
+    // GET map tile data
+    get mapTileData(): any { return this._mapTileData; }
+
     /** Loads the map from a json-type string */
     public loadFromJSON(mapData: string): void {
+        this._loaded = false;
+
         var mapObj = JSON.parse(mapData);
         this._name = mapObj["name"];
         this._height = mapObj["mapTiles"].length;
@@ -95,10 +104,29 @@ export class EditorMap {
                 this._mapTiles[i].push(newTile);
             }.bind(this));
         }.bind(this));
+
+        this._loaded = true;
     }
 
     /** Returns the distance between two positions */
     static distBetweenPos(x1: number, y1: number, x2: number, y2: number): number {
         return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+    }
+
+    /** Get tile at position, undefined if none */
+    public getTileAt(tileX: number, tileY: number): Tile {
+        if (this._mapTiles[tileY] != undefined && this._mapTiles[tileY][tileX] != undefined) {
+            return this._mapTiles[tileY][tileX];
+        }
+        return undefined;
+    }
+
+    /** Replaces tile at position with given tile, returns whether replacement was successful */
+    public replaceTile(tileX: number, tileY: number, newTile: Tile): boolean {
+        if (this.getTileAt(tileX, tileY)) {
+            this._mapTiles[tileY][tileX] = newTile;
+            return true;
+        }
+        return false;
     }
 }

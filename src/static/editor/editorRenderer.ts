@@ -1,12 +1,13 @@
-import { Tile } from './../../tile';
 import { dngnTiles } from './../../consts/dngnTiles';
+import { EditorMap } from './editorMap';
 
 export class EditorRenderer {
-    private _mapTiles: Tile[][] = new Array();
+    private _map: EditorMap;
     private _mapTileImages: any = {};
-    private _mapWidth: number = 0;
-    private _mapHeight: number = 0;
-    private _loaded: boolean = false;
+
+    private _cameraX: number = 0;
+    private _cameraY: number = 0;
+    private _cameraAutoRender: boolean = true;
 
     private _canvas: HTMLCanvasElement;
     private _canvasContext: any;
@@ -16,41 +17,33 @@ export class EditorRenderer {
         this.setCanvas(canvas, canvasW, canvasH);
     }
 
-    // GET/SET map tiles
-    get mapTiles(): any[] { return this._mapTiles; }
-    set mapTiles(tiledata: any[]) {
-        this._loaded = false;
-        if (tiledata) {
-            this._mapHeight = tiledata.length;
-            this._mapWidth = tiledata[0].length;
+    // SET source map
+    set map(m: EditorMap) {
+        this._map = m;
+        this.loadTiles(this._map.mapTileData);
+    }
 
-            this._mapTiles = new Array();
-            for (var i = 0; i < this._mapHeight; i++) {
-                this._mapTiles.push([]);
-                for (var j = 0; j < this._mapWidth; j++) {
-                    var origTile = tiledata[i][j];
-                    var newTile = new Tile(j, i, origTile._tileID);
-                    newTile.addFlags(origTile._flags);
-                    this._mapTiles[i].push(newTile);
-                }
-            }
-
-            this._loaded = true;
+    // GET/SET camera position
+    get cameraX(): number { return this._cameraX; }
+    set cameraX(x: number) {
+        this._cameraX = x;
+        if (this._cameraAutoRender && this._map.loaded) {
+            this.drawScene();
         }
     }
 
-    /** Returns the tile at the given position */
-    public getTileAt(x: number, y: number): Tile {
-        if (this._loaded) {
-            if (x >= 0 && x < this._mapWidth && y >= 0 && y < this._mapHeight) {
-                var tile = this._mapTiles[y][x];
-                if (tile) {
-                    return tile;
-                }
-            }
+    get cameraY(): number { return this._cameraY; }
+    set cameraY(y: number) {
+        this._cameraY = y;
+        if (this._cameraAutoRender && this._map.loaded) {
+            this.drawScene();
         }
-        return undefined;
     }
+
+    // GET/SET automatic re-rendering on camera changes
+    get cameraAutoRender(): boolean { return this._cameraAutoRender; }
+    /** When true, automatically re-renders the scene when the camera position is changed, default true */
+    set cameraAutoRender(c: boolean) { this._cameraAutoRender = c; }
 
     /** Set canvas and its size */
     public setCanvas(canvas: HTMLCanvasElement, canvasW: number, canvasH: number): void {
@@ -89,9 +82,9 @@ export class EditorRenderer {
                 setTimeout(() => {
                     this.drawTile(tileID, x, y);
                 }, 100);
+            } else {
+                this._canvasContext.drawImage(tileImg, x, y);
             }
-
-            this._canvasContext.drawImage(tileImg, x, y);
         } else {
             // Trying to draw unloaded image, load then draw it
             this.loadTile(tileID);
@@ -100,23 +93,23 @@ export class EditorRenderer {
     }
 
     /** Draws the map scene into the canvas */
-    public drawScene(offsetX: number, offsetY: number): void {
-        if (!this._loaded) return;
+    public drawScene(): void {
+        if (!this._map.loaded) return;
 
         // Clear canvas
         this._canvasContext.clearRect(0, 0, 800, 600);
 
         // Draw map
-        var minX = Math.max(0, Math.floor(-offsetX / 32));
-        var minY = Math.max(0, Math.floor(-offsetY / 32));
-        var maxX = Math.min(this._mapWidth, Math.ceil((this._canvas.width - offsetX) / 32));
-        var maxY = Math.min(this._mapHeight, Math.ceil((this._canvas.height - offsetY) / 32));
+        var minX = Math.max(0, Math.floor(-this._cameraX / 32));
+        var minY = Math.max(0, Math.floor(-this._cameraY / 32));
+        var maxX = Math.min(this._map.width, Math.ceil((this._canvas.width - this._cameraX) / 32));
+        var maxY = Math.min(this._map.height, Math.ceil((this._canvas.height - this._cameraY) / 32));
 
         for (var i = minY; i < maxY; i++) {
             for (var j = minX; j < maxX; j++) {
-                var tile = this._mapTiles[i][j];
+                var tile = this._map.getTileAt(j, i);
                 if (tile) {
-                    this.drawTile(tile.tileID, offsetX + j * 32, offsetY + i * 32);
+                    this.drawTile(tile.tileID, this._cameraX + j * 32, this._cameraY + i * 32);
                 }
             }
         }
