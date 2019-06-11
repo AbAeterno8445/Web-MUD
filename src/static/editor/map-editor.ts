@@ -147,10 +147,10 @@ for (var tile in dngnTiles) {
 // Canvas clicking
 var mouseDown = 0;
 document.body.onmousedown = function() { 
-  ++mouseDown;
+  mouseDown = 1;
 }
 document.body.onmouseup = function() {
-  --mouseDown;
+  mouseDown = 0;
 }
 // Click and hold functionalities
 mapCanvas.addEventListener('mousedown', canvasClick, false);
