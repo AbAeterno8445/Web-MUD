@@ -129,4 +129,28 @@ export class EditorMap {
         }
         return false;
     }
+
+    /** Flood fills the clicked region of tiles with the given tile */
+    public floodFillAt(tileX: number, tileY: number, newTile: Tile): void {
+        var sourceTile = this.getTileAt(tileX, tileY);
+        if (sourceTile && sourceTile.tileID != newTile.tileID) {
+            this.floodFill(tileX, tileY, sourceTile.tileID, newTile);
+        }
+    }
+
+    /** Flood fill recursive process */
+    private floodFill(x: number, y: number, srcTileID: string, newTile: Tile): void {
+        var curTile = this.getTileAt(x, y);
+        if (curTile && curTile.tileID == srcTileID) {
+            var newTileCopy = Tile.copyTile(newTile);
+            newTileCopy.posX = x;
+            newTileCopy.posY = y;
+            this.replaceTile(x, y, newTileCopy);
+            
+            this.floodFill(x+1, y, srcTileID, newTile);
+            this.floodFill(x-1, y, srcTileID, newTile);
+            this.floodFill(x, y+1, srcTileID, newTile);
+            this.floodFill(x, y-1, srcTileID, newTile);
+        }
+    }
 }

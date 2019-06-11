@@ -31,6 +31,7 @@ var keysHeld: any = {
     down: false,
     left: false,
     ctrl: false,
+    shift: false,
 };
 document.addEventListener('keydown', function(event) {
     switch (event.keyCode) {
@@ -49,6 +50,9 @@ document.addEventListener('keydown', function(event) {
         case 40: // down arrow
         case 83: // s key
         keysHeld.down = true;
+        break;
+        case 16: // shift (TEST - flood fill)
+        keysHeld.shift = true;
         break;
         case 17: // ctrl (pick tile)
         keysHeld.ctrl = true;
@@ -72,6 +76,9 @@ document.addEventListener('keyup', function(event) {
         case 40: // down arrow
         case 83: // s key
         keysHeld.down = false;
+        break;
+        case 16: // shift (TEST - flood fill)
+        keysHeld.shift = false;
         break;
         case 17: // ctrl (pick tile)
         keysHeld.ctrl = false;
@@ -175,11 +182,17 @@ function canvasClick(event: any): void {
         }
         mouseLastTileX = tileX;
         mouseLastTileY = tileY;
-        
+
         if (mainMap.loaded) {
             var newTile = new Tile(tileX, tileY, selectedTile);
-            mainMap.replaceTile(tileX, tileY, newTile);
-            renderer.drawScene();
+            if (keysHeld.shift) {
+                // TEST - flood fill
+                mainMap.floodFillAt(tileX, tileY, newTile);
+                renderer.drawScene()
+            } else {
+                mainMap.replaceTile(tileX, tileY, newTile);
+                renderer.drawScene();
+            }
         }
     }
 };

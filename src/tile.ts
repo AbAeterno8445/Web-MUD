@@ -15,6 +15,14 @@ export class Tile {
         this._flags = new Array();
     }
 
+    /** Returns a copy of the provided tile */
+    static copyTile(srcTile: Tile): Tile {
+        var newTile = new Tile(srcTile.posX, srcTile.posY, srcTile.tileID);
+        newTile.addFlags(srcTile.flags);
+        newTile.foreTile = srcTile.foreTile;
+        return newTile;
+    }
+
     // GET/SET posX
     get posX(): number { return this._posX; }
     set posX(x: number) { this._posX = x; }
