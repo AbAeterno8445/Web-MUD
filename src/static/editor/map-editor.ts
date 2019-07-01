@@ -4,7 +4,8 @@ import { dngnTiles } from "./../../consts/dngnTiles";
 import { Tile } from "./../../tile";
 
 const mapCanvas = <HTMLCanvasElement> document.getElementById("cv_maplayer");
-var renderer = new EditorRenderer(mapCanvas, 800, 600);
+const topCanvas = mapCanvas; // Canvas with the highest z-index (registers mouse movement and clicks)
+var mapRenderer = new EditorRenderer(mapCanvas, 800, 600);
 var mainMap = new EditorMap();
 
 var cameraSpeed = 20;
@@ -18,8 +19,8 @@ function loadMapFile(evt: any) {
     reader.onload = function(event: any) {
         var mapData = event.target.result;
         mainMap.loadFromJSON(mapData);
-        renderer.map = mainMap;
-        renderer.drawScene();
+        mapRenderer.map = mainMap;
+        mapRenderer.drawScene();
     }
     reader.readAsText(file);
 }
@@ -90,14 +91,14 @@ setInterval(function() {
     var moved = keysHeld.up || keysHeld.down || keysHeld.left || keysHeld.right;
     if (moved) {
         if (keysHeld.up) {
-            renderer.cameraY += cameraSpeed;
+            mapRenderer.cameraY += cameraSpeed;
         } else if (keysHeld.down) {
-            renderer.cameraY -= cameraSpeed;
+            mapRenderer.cameraY -= cameraSpeed;
         }
         if (keysHeld.left) {
-            renderer.cameraX += cameraSpeed;
+            mapRenderer.cameraX += cameraSpeed;
         } else if (keysHeld.right) {
-            renderer.cameraX -= cameraSpeed;
+            mapRenderer.cameraX -= cameraSpeed;
         }
     }
 }, 20);
@@ -110,13 +111,16 @@ function selectTile(tileID: string) {
     var selTileImg = <HTMLImageElement> document.getElementById(selectedTile);
     if (selTileImg) {
         selTileImg.style.backgroundColor = "transparent";
+        selTileImg.style.border = "0px";
     }
 
     selectedTile = tileID;
     // Select new tile image
     selTileImg = <HTMLImageElement> document.getElementById(selectedTile);
     if (selTileImg) {
-        selTileImg.style.backgroundColor = "#2e9afe";
+        var backg_col = "#2e9afe";
+        selTileImg.style.backgroundColor = backg_col;
+        selTileImg.style.border = "1px solid " + backg_col;
         // Set preview
         var previewImg = <HTMLImageElement> document.getElementById('tile-preview-img');
         previewImg.src = selTileImg.src;
@@ -153,17 +157,20 @@ document.body.onmouseup = function() {
   mouseDown = 0;
 }
 // Click and hold functionalities
-mapCanvas.addEventListener('mousedown', canvasClick, false);
-mapCanvas.addEventListener('mousemove', canvasClick, false);
+topCanvas.addEventListener('mousedown', canvasMouseClick, false);
+topCanvas.addEventListener('mousemove', canvasMouseMove, false);
 
 var mouseLastTileX = 0;
 var mouseLastTileY = 0;
-function canvasClick(event: any): void {
-    if (!mouseDown && event.type != "mousedown") return;
-    
+function canvasMouseMove(event: any): void {
+    if (mouseDown) {
+        canvasMouseClick(event);
+    }
+}
+function canvasMouseClick(event: any): void {
     const cvRect = mapCanvas.getBoundingClientRect();
-    var clickX = event.clientX - cvRect.left - renderer.cameraX;
-    var clickY = event.clientY - cvRect.top - renderer.cameraY;
+    var clickX = event.clientX - cvRect.left - mapRenderer.cameraX;
+    var clickY = event.clientY - cvRect.top - mapRenderer.cameraY;
 
     var tileX = Math.floor(clickX / 32);
     var tileY = Math.floor(clickY / 32);
@@ -191,7 +198,7 @@ function canvasClick(event: any): void {
             } else {
                 mainMap.replaceTile(tileX, tileY, newTile);
             }
-            renderer.drawScene();
+            mapRenderer.drawScene();
         }
     }
 };

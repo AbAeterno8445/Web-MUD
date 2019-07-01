@@ -6,6 +6,7 @@ import {monTiles} from './consts/monTiles';
 import {MapInstance} from './map-instance';
 import { InstanceManager } from './instance-manager';
 import { dngnTiles } from './consts/dngnTiles';
+import { ClientManager } from './client-manager';
 
 const http = require('http');
 const socketIO = require('socket.io');
@@ -204,157 +205,13 @@ server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
 
-const instanceManager: InstanceManager = new InstanceManager(io);
-const players: any = {};
+var instanceManager = new InstanceManager(io);
 
-// Dictionary for directional actions
-const dirDict: any = {
-  n: [0, -1],
-  ne: [1, -1],
-  e: [1, 0],
-  se: [1, 1],
-  s: [0, 1],
-  sw: [-1, 1],
-  w: [-1, 0],
-  nw: [-1, -1]
-}
+// Export variables for client manager
+export { sessionHandler, accHandler, charHandler };
 
 io.on('connection', function(socket: any) {
-  var playerSession = sessionHandler.findSessionByID(socket.handshake.sessionID);
-  var playerAcc = accHandler.getAccountByName(playerSession.accName);
-  var playerChar = charHandler.getCharByID(playerSession.selectedChar);
-
-  // Player joins
-  socket.on('newpl', function() {
-    playerAcc.inGame = true;  // Remove this to enable double-logging
-    players[socket.id] = playerChar;
-    instanceManager.playerFirstJoin(socket.id, playerChar);
-  });
-
-  // Player movement
-  socket.on('movement', function(data: any) {
-    if (!playerChar.curInstance) return;
-
-    if (data.dir in dirDict) {
-      var dirList = dirDict[data.dir];
-      playerChar.curInstance.clientCharMoveDir(socket.id, dirList[0], dirList[1]);
-    }
-  });
-
-  // Player attack
-  socket.on('attack', function(data: any) {
-    if (!playerChar.curInstance) return;
-
-    if (data.dir in dirDict) {
-      var dirList = dirDict[data.dir];
-      playerChar.curInstance.clientCharAttack(socket.id, dirList[0], dirList[1]);
-    }
-  });
-
-  // Player disconnects
-  socket.on('disconnect', function() {
-    if (!playerChar.curInstance) return;
-
-    playerChar.curInstance.removeClient(socket.id);
-    playerAcc.inGame = false;
-    delete players[socket.id];
-    instanceManager.runOnAllInstances((inst: MapInstance) => {
-      inst.msgOthers(socket.id, playerChar.name + " has left.", "fff", "");
-    });
-  });
-
-  // Player chat
-  socket.on('chatmsg', function(msg: string) {
-    if (!playerChar.curInstance) return;
-
-    var msgPref = msg[0];
-    if (msgPref == '/') {
-      // Player commands
-      var msgArgs = msg.split(' ');
-      switch(msgArgs[0]) {
-        // Who's online
-        case "/who":
-          var playerList = new Array();
-          instanceManager.runOnAllInstances(function(inst: any) {
-            for (var client in inst.clientList) {
-              playerList.push(inst.clientList[client].name);
-            }
-          });
-          var whoMsg = "Connected players: ";
-          playerList.forEach(function(name: any, i: number) {
-            whoMsg += name;
-            if (i < playerList.length - 1) {
-              whoMsg += ", ";
-            }
-          });
-          whoMsg += ".";
-
-          playerChar.curInstance.msgTo(socket.id, whoMsg, "fff", "");
-        break;
-
-        // Whisper player
-        case "/msg":
-          var recipient = msgArgs[1].replace('_', ' ');
-          var whisperMsg = msgArgs.slice(2).join(' ');
-          var success = false;
-          for (var pl in players) {
-            var targetChar = players[pl];
-            if (targetChar.name == recipient) {
-              if (targetChar === playerChar) {
-                playerChar.curInstance.msgTo(socket.id, "You mutter to yourself: " + whisperMsg, "9A2EFE", "<");
-              } else {
-                targetChar.curInstance.msgTo(pl, playerChar.name + " tells you: " + whisperMsg, "9A2EFE", "<");
-                playerChar.curInstance.msgTo(socket.id, "You tell " + targetChar.name + ": " + whisperMsg, "D358F7", ">");
-              }
-              success = true;
-              break;
-            }
-          }
-          if (!success) {
-            playerChar.curInstance.msgTo(socket.id, "No player named " + recipient + "!", "FE2E2E", "");
-          }
-        break;
-
-        // Bind to map
-        case "/bind":
-          var plMap = playerChar.curInstance.map;
-          if (plMap.bind) {
-            playerChar.curInstance.msgTo(socket.id, "You are now bound to this map. You will respawn here on death or when logging out.", "fff", "");
-            playerChar.boundMap = plMap.name;
-          } else {
-            playerChar.curInstance.msgTo(socket.id, "You can't bind to this map!", "fff", "");
-          }
-        break;
-
-        // Unbind - return binding to default map
-        case "/unbind":
-          playerChar.curInstance.msgTo(socket.id, "You are now bound to the default map.", "fff", "");
-          playerChar.boundMap = InstanceManager.defaultBind;
-        break;
-
-        // DEBUG - teleport to map
-        case "/tp":
-          var targetMap = instanceManager.getGlobalInstance(msgArgs[1]);
-          var targetX = +msgArgs[2];
-          var targetY = +msgArgs[3];
-          if (targetMap) {
-            playerChar.curInstance.removeClient(socket.id);
-            targetMap.addClient(socket.id, playerChar);
-            targetMap.clientCharMoveTo(socket.id, targetX, targetY, false);
-          }
-        break;
-      }
-    } else if (msgPref == '#') {
-      // Global chat
-      msg = msg.slice(1);
-      instanceManager.runOnAllInstances((inst: any) => {
-        inst.msgAll(playerChar.name + ": " + msg, "f80", "#");
-      });
-    } else {
-      // Local chat
-      playerChar.curInstance.msgLocal(playerChar.posX, playerChar.posY, playerChar.name + ": " + msg, "cff", "");
-    }
-  });
+  var clientManager = new ClientManager(socket, instanceManager); 
 });
 
 // Process tick

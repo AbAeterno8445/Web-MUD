@@ -31,8 +31,15 @@ canvas {
     color: #ccc;
 }
 
-.pref_gold {
-    color: #ff0;
+.game_message {
+    line-height: 1.2em;
+}
+
+.pref_span {
+    display: inline-block;
+    margin-right: 3px;
+    vertical-align: top;
+    font-size: .7em;
 }
 
 progress {

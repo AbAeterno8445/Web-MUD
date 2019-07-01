@@ -34,10 +34,14 @@ div {
 }
 
 .disp-canvas canvas {
+    position: relative;
     left: 0;
     top: 0;
     width: 800px;
     height: 600px;
+}
+
+#cv_maplayer {
     background-color: #222;
     border: 1px solid #2e9afe;
 }

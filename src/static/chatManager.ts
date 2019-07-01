@@ -1,10 +1,5 @@
 const messageBox = document.getElementById('messages');
 
-// Prefix css classes: key is glyph, value is class name
-const prefGlyphs: any = {
-    "$": "pref_gold"
-}
-
 export class ChatManager {
     private _messageLog: Message[] = new Array();
 
@@ -22,11 +17,11 @@ export class ChatManager {
         newMsg.className = 'game_message';
 
         // Prefix
-        if (pref in prefGlyphs) {
-            var prefSpan = document.createElement('span');
-            prefSpan.className = prefGlyphs[pref];
-            newMsg.appendChild(prefSpan);
-        }
+        var prefSpan = document.createElement('span');
+        prefSpan.className = 'pref_span';
+        prefSpan.style.color = "#" + color;
+        prefSpan.innerHTML = pref;
+        newMsg.appendChild(prefSpan);
 
         // Message
         var msgSpan = document.createElement('span');

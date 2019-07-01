@@ -92,12 +92,16 @@ export class EditorRenderer {
         }
     }
 
+    public clearCanvas(): void {
+        this._canvasContext.clearRect(0, 0, 800, 600);
+    }
+
     /** Draws the map scene into the canvas */
     public drawScene(): void {
         if (!this._map.loaded) return;
 
         // Clear canvas
-        this._canvasContext.clearRect(0, 0, 800, 600);
+        this.clearCanvas();
 
         // Draw map
         var minX = Math.max(0, Math.floor(-this._cameraX / 32));
