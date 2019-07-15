@@ -14,8 +14,8 @@ export class InstanceManager {
 
     /** List of maps used in instance loading; use this when creating new instances */
     public static mapList = {
-        huge: "huge",
-        small: "small"
+        "huge": "huge",
+        "small": "small"
     }
     /** Default map, should be loaded when no map is found for a player.    
      *  Should always have a global instance available. */
@@ -33,21 +33,25 @@ export class InstanceManager {
     /** Create a new instance for the given map */
     public createInstance(baseMap: string, owner: string, callback: Function): void {
         var newMap = new Map();
-        newMap.loadFromFile(baseMap, (loaded: boolean) => {
-            if (loaded) {
-                var mapInst = new MapInstance(newMap, this._io);
-                if (baseMap in this._instances == false) {
-                    this._instances[baseMap] = {};
+        if (baseMap in InstanceManager.mapList) {
+            newMap.loadFromFile(baseMap, (loaded: boolean) => {
+                if (loaded) {
+                    var mapInst = new MapInstance(newMap, this._io);
+                    if (baseMap in this._instances == false) {
+                        this._instances[baseMap] = {};
+                    }
+                    if (owner in this._instances[baseMap] == false) {
+                        this._instances[baseMap][owner] = new Array();
+                    }
+                    this._instances[baseMap][owner].push(mapInst);
+                    callback(mapInst);
+                } else {
+                    callback(undefined);
                 }
-                if (owner in this._instances[baseMap] == false) {
-                    this._instances[baseMap][owner] = new Array();
-                }
-                this._instances[baseMap][owner].push(mapInst);
-                callback(mapInst);
-            } else {
-                callback(undefined);
-            }
-        });
+            });
+        } else {
+            callback(undefined)
+        }
     }
 
     /** Get a particular owner's instance. Returns undefined if not found */

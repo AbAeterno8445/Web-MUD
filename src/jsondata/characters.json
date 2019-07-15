@@ -15,6 +15,22 @@
             "_inventory": [],
             "_charID": 1,
             "_boundMap": "huge"
+        },
+        {
+            "_posX": 0,
+            "_posY": 0,
+            "_tileID": "HUMANOIDS_BOGGART",
+            "_name": "BOGG",
+            "_level": 1,
+            "_mvSpeed": 0.4,
+            "_attSpeed": 0.6,
+            "_maxhp": 20,
+            "_dmgPhys": 1,
+            "_sightRange": 7,
+            "_hp": 20,
+            "_inventory": [],
+            "_charID": 2,
+            "_boundMap": "huge"
         }
     ]
 }

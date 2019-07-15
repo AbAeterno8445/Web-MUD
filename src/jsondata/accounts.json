@@ -1,7 +1,7 @@
 {
     "accounts": [
         {
-            "inGame": false,
+            "inGame": true,
             "name": "admin",
             "password": "admin",
             "characters": [

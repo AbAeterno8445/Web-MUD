@@ -86,13 +86,13 @@ export class MapInstance {
     }
 
     /** Send message to particular player client */
-    public msgTo(client: any, msg: string, color: string, prefix: string): void {
-        this.emitTo(client, 'msg', {msg: msg, col: color, pref: prefix});
+    public msgTo(socketID: any, msg: string, color: string, prefix: string): void {
+        this.emitTo(socketID, 'msg', {msg: msg, col: color, pref: prefix});
     }
 
     /** Send message to all but given player client */
-    public msgOthers(client: any, msg: string, color: string, prefix: string): void {
-        this.emitOthers(client, 'msg', {msg: msg, col: color, pref: prefix});
+    public msgOthers(socketID: any, msg: string, color: string, prefix: string): void {
+        this.emitOthers(socketID, 'msg', {msg: msg, col: color, pref: prefix});
     }
 
     /** Send message to players near position (within 8 tiles) */

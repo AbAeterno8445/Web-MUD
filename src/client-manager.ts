@@ -99,6 +99,18 @@ export class ClientManager {
     }
   }
 
+  /** Teleport player, supports teleporting to different instance */
+  private tpPlayer(playerChar: Character, x: number, y: number, targetInst: MapInstance) {
+    if (!targetInst) {
+      console.log("Could not teleport player " + playerChar.name + ": instance does not exist.");
+      return;
+    };
+
+    playerChar.curInstance.removeClient(this._socket.id);
+    this._plChar.moveTo(x, y);
+    targetInst.addClient(this._socket.id, this._plChar);
+  }
+
   /** On player chat */
   private plChat(msg: string) {
     if (!this._plChar.curInstance) return;
@@ -168,17 +180,45 @@ export class ClientManager {
           this._plChar.boundMap = InstanceManager.defaultBind;
           break;
 
-        // DEBUG - teleport to map (/tp <map name> <x> <y> <instance number>)
+        // DEBUG - teleport to map (/tp <map name> <x> <y> <instance number> <instance owner>)
         // If instance # doesn't exist, a new one is created
         case "/tp":
-          var targetMap = this._instanceMngr.getGlobalInstance(msgArgs[1]);
-          var targetX = +msgArgs[2];
-          var targetY = +msgArgs[3];
-          if (targetMap) {
-            this._plChar.curInstance.removeClient(this._socket.id);
-            targetMap.addClient(this._socket.id, this._plChar);
-            targetMap.clientCharMoveTo(this._socket.id, targetX, targetY, false);
+          // Parameters
+          var targetMapName = msgArgs[1];
+          var targetX = +msgArgs[2] || 0;
+          var targetY = +msgArgs[3] || 0;
+          var targetInst = +msgArgs[4];
+          var targetInstOwner = msgArgs[5] || this._plChar.name;
+          
+          console.log(targetMapName, targetX, targetY, targetInst, targetInstOwner);
+
+          // Process command
+          // No arguments - explain command usage
+          if (msgArgs.length == 1) {
+            this._plChar.curInstance.msgTo(this._socket.id, "Usage: /tp (map name) (x) (y) [instance number] [instance owner]", "fff", "!");
+            return;
           }
+          // Target instance given
+          if (targetInst != NaN) {
+            console.log("particular");
+            var targetMap = this._instanceMngr.getParticularInstance(targetMapName, targetInstOwner, targetInst);
+            // Instance does not exist - attempt to create it then teleport player
+            if (!targetMap) {
+              this._instanceMngr.createInstance(targetMapName, targetInstOwner, (newInst: MapInstance) => {
+                if (!newInst) {
+                  this._plChar.curInstance.msgTo(this._socket.id, "tp failed: Could not create instance for the specified map.", "FE2E2E", "X");
+                  return;
+                }
+                this.tpPlayer(this._plChar, targetX, targetY, newInst);
+              });
+              return;
+            }
+          } else {
+            console.log("global");
+            var targetMap = this._instanceMngr.getGlobalInstance(msgArgs[1]);
+          }
+
+          this.tpPlayer(this._plChar, targetX, targetY, targetMap);
           break;
       }
     } else if (msgPref == '#') {
